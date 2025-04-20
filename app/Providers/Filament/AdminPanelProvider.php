@@ -5,7 +5,7 @@ namespace App\Providers\Filament;
 use App\Filament\Pages\Auth\EmailVerification;
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Auth\RequestPasswordReset;
-use App\Filament\Resources\MenuResource;
+/* use App\Filament\Resources\MenuResource; */
 use App\Http\Middleware\FilamentRobotsMiddleware;
 use App\Livewire\MyProfileExtended;
 use App\Settings\GeneralSettings;
@@ -64,7 +64,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigationItems([
                 Navigation\NavigationItem::make('Log Viewer') // !! To-Do: lang
-                    ->visible(fn(): bool => auth()->user()->can('access_log_viewer'))
+                    ->visible(fn (): bool => auth()->user()->can('access_log_viewer'))
                     ->url(config('app.url').'/'.config('log-viewer.route_path'), shouldOpenInNewTab: true)
                     ->icon('fluentui-document-bullet-list-multiple-20-o')
                     ->group(__('menu.nav_group.activities'))
@@ -73,7 +73,7 @@ class AdminPanelProvider extends PanelProvider
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->resources([
-                config('filament-logger.activity_resource')
+                config('filament-logger.activity_resource'),
             ])
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
@@ -93,7 +93,7 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
-                FilamentRobotsMiddleware::class
+                FilamentRobotsMiddleware::class,
             ])
             ->authMiddleware([
                 Authenticate::class,
@@ -101,11 +101,11 @@ class AdminPanelProvider extends PanelProvider
             ->plugins([
                 \TomatoPHP\FilamentMediaManager\FilamentMediaManagerPlugin::make()
                     ->allowSubFolders(),
-                \BezhanSalleh\FilamentExceptions\FilamentExceptionsPlugin::make(),
+                /* \BezhanSalleh\FilamentExceptions\FilamentExceptionsPlugin::make(), */
                 \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make()
                     ->gridColumns([
                         'default' => 2,
-                        'sm' => 1
+                        'sm' => 1,
                     ])
                     ->sectionColumnSpan(1)
                     ->checkboxListColumns([
@@ -128,19 +128,19 @@ class AdminPanelProvider extends PanelProvider
                     ->myProfileComponents([
                         'personal_info' => MyProfileExtended::class,
                     ]),
-                \Datlechin\FilamentMenuBuilder\FilamentMenuBuilderPlugin::make()
-                    ->usingResource(MenuResource::class)
-                    ->addMenuPanels([
-                        \Datlechin\FilamentMenuBuilder\MenuPanel\StaticMenuPanel::make()
-                            ->addMany([
-                                'Home' => url('/'),
-                                'Blog' => url('/blog'),
-                            ])
-                            ->description('Default menus')
-                            ->collapsed(true)
-                            ->collapsible(true)
-                            ->paginate(perPage: 5, condition: true)
-                    ])
+                /* \Datlechin\FilamentMenuBuilder\FilamentMenuBuilderPlugin::make() */
+                /*     ->usingResource(MenuResource::class) */
+                /*     ->addMenuPanels([ */
+                /*         \Datlechin\FilamentMenuBuilder\MenuPanel\StaticMenuPanel::make() */
+                /*             ->addMany([ */
+                /*                 'Home' => url('/'), */
+                /*                 'Blog' => url('/blog'), */
+                /*             ]) */
+                /*             ->description('Default menus') */
+                /*             ->collapsed(true) */
+                /*             ->collapsible(true) */
+                /*             ->paginate(perPage: 5, condition: true) */
+                /*     ]) */
             ]);
     }
 }
