@@ -37,12 +37,13 @@ class AdminPanelProvider extends PanelProvider
             ->login(Login::class)
             ->passwordReset(RequestPasswordReset::class)
             ->emailVerification(EmailVerification::class)
-            ->favicon(fn (GeneralSettings $settings) => Storage::url($settings->site_favicon))
-            ->brandName(fn (GeneralSettings $settings) => $settings->brand_name)
-            ->brandLogo(fn (GeneralSettings $settings) => Storage::url($settings->brand_logo))
-            ->brandLogoHeight(fn (GeneralSettings $settings) => $settings->brand_logoHeight)
-            ->colors(fn (GeneralSettings $settings) => $settings->site_theme)
+            ->favicon(fn(GeneralSettings $settings) => Storage::url($settings->site_favicon))
+            ->brandName(fn(GeneralSettings $settings) => $settings->brand_name)
+            ->brandLogo(fn(GeneralSettings $settings) => Storage::url($settings->brand_logo))
+            ->brandLogoHeight(fn(GeneralSettings $settings) => $settings->brand_logoHeight)
+            ->colors(fn(GeneralSettings $settings) => $settings->site_theme)
             ->databaseNotifications()->databaseNotificationsPolling('30s')
+            ->spa()
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
             ->sidebarCollapsibleOnDesktop()
             ->navigationGroups([
@@ -64,8 +65,8 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigationItems([
                 Navigation\NavigationItem::make('Log Viewer') // !! To-Do: lang
-                    ->visible(fn (): bool => auth()->user()->can('access_log_viewer'))
-                    ->url(config('app.url').'/'.config('log-viewer.route_path'), shouldOpenInNewTab: true)
+                    ->visible(fn(): bool => auth()->user()->can('access_log_viewer'))
+                    ->url(config('app.url') . '/' . config('log-viewer.route_path'), shouldOpenInNewTab: true)
                     ->icon('fluentui-document-bullet-list-multiple-20-o')
                     ->group(__('menu.nav_group.activities'))
                     ->sort(99),
