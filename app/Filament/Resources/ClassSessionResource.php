@@ -17,18 +17,23 @@ class ClassSessionResource extends Resource
 {
     protected static ?string $model = ClassSession::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-clock';
+
+    protected static ?string $navigationGroup = 'Academic Management';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\Select::make('semester_class_id')
-                    ->relationship('semesterClass', 'id')
-                    ->required(),
+                    ->relationship('semesterClass', 'nama_semester_class')
+                    ->required()
+                    ->label('Class')
+                    ->searchable(),
                 Forms\Components\DateTimePicker::make('date')
                     ->required(),
                 Forms\Components\Textarea::make('description')
+                    ->maxLength(65535)
                     ->columnSpanFull(),
             ]);
     }
@@ -37,9 +42,14 @@ class ClassSessionResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('semesterClass.id')
-                    ->numeric()
-                    ->sortable(),
+                Tables\Columns\TextColumn::make('semesterClass.nama_semester_class')
+                    ->sortable()
+                    ->searchable()
+                    ->label('Class'),
+                Tables\Columns\TextColumn::make('semesterClass.semester.school_year')
+                    ->sortable()
+                    ->searchable()
+                    ->label('School Year'),
                 Tables\Columns\TextColumn::make('date')
                     ->dateTime()
                     ->sortable(),
@@ -57,6 +67,7 @@ class ClassSessionResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -68,7 +79,8 @@ class ClassSessionResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\AttendancesRelationManager::class,
+            RelationManagers\StudentAchievementsRelationManager::class,
         ];
     }
 
@@ -77,6 +89,7 @@ class ClassSessionResource extends Resource
         return [
             'index' => Pages\ListClassSessions::route('/'),
             'create' => Pages\CreateClassSession::route('/create'),
+            // 'view' => Pages\ViewClassSession::route('/{record}'),
             'edit' => Pages\EditClassSession::route('/{record}/edit'),
         ];
     }

@@ -17,15 +17,24 @@ class AchievementResource extends Resource
 {
     protected static ?string $model = Achievement::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-trophy';
+
+    protected static ?string $navigationGroup = 'Academic Management';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('achievement_name')
-                    ->required(),
-                Forms\Components\TextInput::make('category')
+                    ->required()
+                    ->maxLength(255)
+                    ->label('Achievement Name'),
+                Forms\Components\Select::make('category')
+                    ->options([
+                        'ummi' => 'Ummi',
+                        'tahfidz' => 'Tahfidz',
+                        'doaHadist' => 'Doa Hadist',
+                    ])
                     ->required(),
             ]);
     }
@@ -35,9 +44,16 @@ class AchievementResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('achievement_name')
-                    ->searchable(),
+                    ->searchable()
+                    ->label('Achievement Name'),
                 Tables\Columns\TextColumn::make('category')
-                    ->searchable(),
+                    ->badge()
+                    ->formatStateUsing(fn(string $state): string => ucfirst($state))
+                    ->color(fn(string $state): string => match ($state) {
+                        'ummi' => 'primary',
+                        'tahfidz' => 'success',
+                        'doaHadist' => 'warning',
+                    }),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -52,6 +68,7 @@ class AchievementResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -63,7 +80,7 @@ class AchievementResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\StudentAchievementsRelationManager::class,
         ];
     }
 
@@ -72,6 +89,7 @@ class AchievementResource extends Resource
         return [
             'index' => Pages\ListAchievements::route('/'),
             'create' => Pages\CreateAchievement::route('/create'),
+            // 'view' => Pages\ViewAchievement::route('/{record}'),
             'edit' => Pages\EditAchievement::route('/{record}/edit'),
         ];
     }

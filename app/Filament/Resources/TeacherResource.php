@@ -17,19 +17,26 @@ class TeacherResource extends Resource
 {
     protected static ?string $model = Teacher::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-academic-cap';
+
+    protected static ?string $navigationGroup = 'Academic Management';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
-                    ->required(),
+                    ->required()
+                    ->maxLength(255),
                 Forms\Components\TextInput::make('email')
-                    ->email(),
+                    ->email()
+                    ->maxLength(255)
+                    ->unique(Teacher::class, 'email', ignoreRecord: true),
                 Forms\Components\TextInput::make('phone')
-                    ->tel(),
+                    ->tel()
+                    ->maxLength(255),
                 Forms\Components\Textarea::make('address')
+                    ->maxLength(65535)
                     ->columnSpanFull(),
             ]);
     }
@@ -58,6 +65,7 @@ class TeacherResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -69,7 +77,7 @@ class TeacherResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\SemesterClassesRelationManager::class,
         ];
     }
 
@@ -78,6 +86,7 @@ class TeacherResource extends Resource
         return [
             'index' => Pages\ListTeachers::route('/'),
             'create' => Pages\CreateTeacher::route('/create'),
+            // 'view' => Pages\ViewTeacher::route('/{record}'),
             'edit' => Pages\EditTeacher::route('/{record}/edit'),
         ];
     }

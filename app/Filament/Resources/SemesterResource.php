@@ -17,16 +17,25 @@ class SemesterResource extends Resource
 {
     protected static ?string $model = Semester::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-calendar';
+
+    protected static ?string $navigationGroup = 'Academic Management';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('school_year')
-                    ->required(),
-                Forms\Components\TextInput::make('semester_enum')
-                    ->required(),
+                    ->required()
+                    ->maxLength(255)
+                    ->placeholder('e.g. 2023/2024'),
+                Forms\Components\Select::make('semester_enum')
+                    ->options([
+                        '1' => 'Semester 1',
+                        '2' => 'Semester 2',
+                    ])
+                    ->required()
+                    ->label('Semester'),
             ]);
     }
 
@@ -35,9 +44,11 @@ class SemesterResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('school_year')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('semester_enum')
-                    ->searchable(),
+                    ->formatStateUsing(fn(string $state): string => "Semester $state")
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -52,6 +63,7 @@ class SemesterResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -63,7 +75,7 @@ class SemesterResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\SemesterClassesRelationManager::class,
         ];
     }
 
@@ -72,6 +84,7 @@ class SemesterResource extends Resource
         return [
             'index' => Pages\ListSemesters::route('/'),
             'create' => Pages\CreateSemester::route('/create'),
+            // 'view' => Pages\ViewSemester::route('/{record}'),
             'edit' => Pages\EditSemester::route('/{record}/edit'),
         ];
     }
