@@ -22,6 +22,7 @@ class ManageMail extends SettingsPage
     protected static string $settings = MailSettings::class;
 
     protected static ?int $navigationSort = 99;
+
     protected static ?string $navigationIcon = 'fluentui-mail-settings-20';
 
     /**
@@ -59,10 +60,10 @@ class ManageMail extends SettingsPage
                                     ->schema([
                                         Forms\Components\Select::make('driver')->label(fn () => __('page.mail_settings.fields.driver'))
                                             ->options([
-                                                "smtp" => "SMTP (Recommended)",
-                                                "mailgun" => "Mailgun",
-                                                "ses" => "Amazon SES",
-                                                "postmark" => "Postmark",
+                                                'smtp' => 'SMTP (Recommended)',
+                                                'mailgun' => 'Mailgun',
+                                                'ses' => 'Amazon SES',
+                                                'postmark' => 'Postmark',
                                             ])
                                             ->native(false)
                                             ->required()
@@ -72,8 +73,8 @@ class ManageMail extends SettingsPage
                                         Forms\Components\TextInput::make('port')->label(fn () => __('page.mail_settings.fields.port')),
                                         Forms\Components\Select::make('encryption')->label(fn () => __('page.mail_settings.fields.encryption'))
                                             ->options([
-                                                "ssl" => "SSL",
-                                                "tls" => "TLS",
+                                                'ssl' => 'SSL',
+                                                'tls' => 'TLS',
                                             ])
                                             ->native(false),
                                         Forms\Components\TextInput::make('timeout')->label(fn () => __('page.mail_settings.fields.timeout')),
@@ -83,10 +84,10 @@ class ManageMail extends SettingsPage
                                             ->revealable(),
                                     ])
                                     ->columns(3),
-                            ])
+                            ]),
                     ])
                     ->columnSpan([
-                        "md" => 2
+                        'md' => 2,
                     ]),
                 Forms\Components\Group::make()
                     ->schema([
@@ -109,23 +110,23 @@ class ManageMail extends SettingsPage
                                     ->placeholder(fn () => __('page.mail_settings.fields.placeholder.receiver_email'))
                                     ->required(),
                                 Forms\Components\Actions::make([
-                                        Forms\Components\Actions\Action::make('Send Test Mail')
-                                            ->label(fn () => __('page.mail_settings.actions.send_test_mail'))
-                                            ->action('sendTestMail')
-                                            ->color('warning')
-                                            ->icon('fluentui-mail-alert-28-o')
-                                    ])->fullWidth(),
-                            ])
+                                    Forms\Components\Actions\Action::make('Send Test Mail')
+                                        ->label(fn () => __('page.mail_settings.actions.send_test_mail'))
+                                        ->action('sendTestMail')
+                                        ->color('warning')
+                                        ->icon('fluentui-mail-alert-28-o'),
+                                ])->fullWidth(),
+                            ]),
                     ])
                     ->columnSpan([
-                        "md" => 1
+                        'md' => 1,
                     ]),
             ])
             ->columns(3)
             ->statePath('data');
     }
 
-    public function save(MailSettings $settings = null): void
+    public function save(?MailSettings $settings = null): void
     {
         try {
             $this->callHook('beforeValidate');
@@ -152,7 +153,7 @@ class ManageMail extends SettingsPage
         }
     }
 
-    public function sendTestMail(MailSettings $settings = null)
+    public function sendTestMail(?MailSettings $settings = null)
     {
         $data = $this->form->getState();
 
@@ -161,7 +162,7 @@ class ManageMail extends SettingsPage
             $mailTo = $data['mail_to'];
             $mailData = [
                 'title' => 'This is a test email to verify SMTP settings',
-                'body' => 'This is for testing email using smtp.'
+                'body' => 'This is for testing email using smtp.',
             ];
 
             Mail::to($mailTo)->send(new TestMail($mailData));
@@ -175,41 +176,41 @@ class ManageMail extends SettingsPage
     public function sendSuccessNotification($title)
     {
         Notification::make()
-                ->title($title)
-                ->success()
-                ->send();
+            ->title($title)
+            ->success()
+            ->send();
     }
 
     public function sendErrorNotification($title)
     {
         Notification::make()
-                ->title($title)
-                ->danger()
-                ->send();
+            ->title($title)
+            ->danger()
+            ->send();
     }
 
     public static function getNavigationGroup(): ?string
     {
-        return __("menu.nav_group.settings");
+        return __('menu.nav_group.settings');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __("page.mail_settings.navigationLabel");
+        return __('page.mail_settings.navigationLabel');
     }
 
     public function getTitle(): string|Htmlable
     {
-        return __("page.mail_settings.title");
+        return __('page.mail_settings.title');
     }
 
     public function getHeading(): string|Htmlable
     {
-        return __("page.mail_settings.heading");
+        return __('page.mail_settings.heading');
     }
 
     public function getSubheading(): string|Htmlable|null
     {
-        return __("page.mail_settings.subheading");
+        return __('page.mail_settings.subheading');
     }
 }

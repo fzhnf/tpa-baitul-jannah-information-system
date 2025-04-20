@@ -9,12 +9,11 @@ use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Notifications\Auth\VerifyEmail;
 use Filament\Notifications\Notification;
-use Illuminate\Contracts\Support\Htmlable;
 use Filament\Pages\Auth\EmailVerification\EmailVerificationPrompt;
+use Illuminate\Contracts\Support\Htmlable;
 
 class EmailVerification extends EmailVerificationPrompt
 {
-
     /**
      * @var view-string
      */
@@ -24,8 +23,8 @@ class EmailVerification extends EmailVerificationPrompt
     {
         return Action::make('resendNotification')
             ->link()
-            ->label(__('filament-panels::pages/auth/email-verification/email-verification-prompt.actions.resend_notification.label') . '.')
-            ->action(function (MailSettings $settings = null): void {
+            ->label(__('filament-panels::pages/auth/email-verification/email-verification-prompt.actions.resend_notification.label').'.')
+            ->action(function (?MailSettings $settings = null): void {
                 try {
                     $this->rateLimit(2);
                 } catch (TooManyRequestsException $exception) {
@@ -52,7 +51,7 @@ class EmailVerification extends EmailVerificationPrompt
                     throw new Exception("Model [{$userClass}] does not have a [notify()] method.");
                 }
 
-                $notification = new VerifyEmail();
+                $notification = new VerifyEmail;
                 $notification->url = Filament::getVerifyEmailUrl($user);
 
                 $settings->loadMailSettingsToConfig();
@@ -66,12 +65,12 @@ class EmailVerification extends EmailVerificationPrompt
             });
     }
 
-    public function getTitle(): string | Htmlable
+    public function getTitle(): string|Htmlable
     {
         return __('filament-panels::pages/auth/email-verification/email-verification-prompt.title');
     }
 
-    public function getHeading(): string | Htmlable
+    public function getHeading(): string|Htmlable
     {
         return __('filament-panels::pages/auth/email-verification/email-verification-prompt.heading');
     }
