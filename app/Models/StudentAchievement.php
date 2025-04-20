@@ -1,0 +1,45 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+class StudentAchievement extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'student_id',
+        'class_session_id',
+        'achievement_id',
+        'tanggal',
+        'keterangan',
+        'catatan',
+        'makruj',
+        'mad',
+        'tajwid',
+        'kelancaran',
+        'fashohah',
+    ];
+
+    protected $casts = [
+        'tanggal' => 'date',
+    ];
+
+    public function student(): BelongsTo
+    {
+        return $this->belongsTo(Student::class);
+    }
+
+    public function classSession(): BelongsTo
+    {
+        return $this->belongsTo(ClassSession::class);
+    }
+
+    public function achievement(): BelongsTo
+    {
+        return $this->belongsTo(Achievement::class);
+    }
+}
