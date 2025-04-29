@@ -6,6 +6,10 @@ use Faker\Provider\Base as BaseProvider;
 
 class HtmlProvider extends BaseProvider
 {
+    /**
+     * @param  mixed  $tags
+     * @return string
+     */
     public function randomHtml($tags = ['p', 'a', 'ul', 'ol', 'li', 'div'])
     {
         $html = '';
