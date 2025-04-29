@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('class_sessions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('semester_class_id')->constrained()->onDelete('cascade');
-            $table->dateTime('date');
-            $table->text('description')->nullable();
+            $table->dateTime('date'); // Changed from session_date to match your form
+            $table->text('description');
+            $table->string('topic')->nullable();
             $table->timestamps();
         });
     }

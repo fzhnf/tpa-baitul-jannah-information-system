@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('semester_class_teacher', function (Blueprint $table) {
             $table->foreignId('semester_class_id')->constrained()->onDelete('cascade');
-            $table->foreignId('teacher_id')->constrained()->onDelete('cascade');
+            $table->foreignUuid('user_id')->constrained()->cascadeOnDelete();
 
             // Primary key
-            $table->primary(['semester_class_id', 'teacher_id']);
+            $table->primary(['semester_class_id', 'user_id']);
         });
     }
 
