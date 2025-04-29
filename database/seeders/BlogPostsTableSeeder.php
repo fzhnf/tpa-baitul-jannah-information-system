@@ -2,25 +2,23 @@
 
 namespace Database\Seeders;
 
+use App\Models\Blog\Category;
+use App\Models\User;
+use Database\Factories\HtmlProvider;
+use Faker\Factory as Faker;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Faker\Factory as Faker;
-use App\Models\User;
-use App\Models\Blog\Category;
 use Illuminate\Support\Str;
 use Symfony\Component\Uid\Ulid;
-use Database\Factories\HtmlProvider;
 
 class BlogPostsTableSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
         $faker = Faker::create();
         $faker->addProvider(new HtmlProvider($faker));
 
-        $authorIds = User::whereHas('roles', function ($query) {
-            $query->where('name', '=', 'author');
-        })->pluck('id')->toArray();
+        $authorIds = User::all()->pluck('id')->toArray();
 
         $categoryIds = Category::pluck('id')->toArray();
 
@@ -29,7 +27,7 @@ class BlogPostsTableSeeder extends Seeder
             $content = $faker->randomHtml(); // Generate HTML content
 
             DB::table('blog_posts')->insert([
-                'id' => (string) new Ulid(),
+                'id' => (string) new Ulid,
                 'blog_author_id' => $faker->randomElement($authorIds),
                 'blog_category_id' => $faker->randomElement($categoryIds),
                 'is_featured' => $faker->boolean(30),
