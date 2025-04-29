@@ -10,8 +10,6 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class StudentResource extends Resource
 {
@@ -28,21 +26,21 @@ class StudentResource extends Resource
                 Forms\Components\TextInput::make('student_name')
                     ->required()
                     ->maxLength(255)
-                    ->label('Student Name'),
+                    ->label('Nama Murid'),
                 Forms\Components\TextInput::make('address')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('guardian')
-                    ->label('Guardian (Orang tua/ wali murid)')
+                    ->label('Orang tua/ wali murid')
                     ->maxLength(255),
-                Forms\Components\DatePicker::make('entry_date'),
+                Forms\Components\DatePicker::make('entry_date')->label('tanggal masuk'),
                 Forms\Components\FileUpload::make('profile_picture_url')
                     ->image()
                     ->directory('student-profiles')
-                    ->label('Profile Picture'),
+                    ->label('foto profil'),
                 Forms\Components\TextInput::make('guardian_number')
                     ->tel()
                     ->maxLength(255)
-                    ->label('Guardian Phone Number'),
+                    ->label('Nomor telepon orang tua/ wali murid'),
             ]);
     }
 

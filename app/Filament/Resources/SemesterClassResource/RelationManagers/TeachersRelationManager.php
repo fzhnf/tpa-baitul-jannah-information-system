@@ -7,12 +7,10 @@ use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class TeachersRelationManager extends RelationManager
 {
-    protected static string $relationship = 'teachers';
+    protected static string $relationship = 'users';
 
     public function form(Form $form): Form
     {
