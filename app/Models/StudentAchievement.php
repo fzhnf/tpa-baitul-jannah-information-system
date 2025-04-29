@@ -28,16 +28,25 @@ class StudentAchievement extends Model
         'tanggal' => 'date',
     ];
 
+    /**
+     * @return BelongsTo<Student,StudentAchievement>
+     */
     public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class);
     }
 
+    /**
+     * @return BelongsTo<ClassSession,StudentAchievement>
+     */
     public function classSession(): BelongsTo
     {
         return $this->belongsTo(ClassSession::class);
     }
 
+    /**
+     * @return BelongsTo<Achievement,StudentAchievement>
+     */
     public function achievement(): BelongsTo
     {
         return $this->belongsTo(Achievement::class);

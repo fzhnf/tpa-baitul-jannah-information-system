@@ -6,14 +6,12 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 /**
- * 
- *
  * @property string $id
  * @property string|null $banner_category_id
  * @property int $sort
@@ -30,6 +28,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @property-read \App\Models\BannerCategory|null $category
  * @property-read \Spatie\MediaLibrary\MediaCollections\Models\Collections\MediaCollection<int, Media> $media
  * @property-read int|null $media_count
+ *
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Banner newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Banner newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Banner query()
@@ -46,14 +45,15 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Banner whereStartDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Banner whereTitle($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Banner whereUpdatedAt($value)
+ *
  * @mixin \Eloquent
  */
 class Banner extends Model implements HasMedia
 {
-    use InteractsWithMedia;
     use HasFactory, HasUlids;
+    use InteractsWithMedia;
 
-     /**
+    /**
      * @var array<int, string>
      */
     protected $fillable = [
@@ -76,22 +76,25 @@ class Banner extends Model implements HasMedia
         'is_visible' => 'boolean',
     ];
 
+    /**
+     * @return BelongsTo<BannerCategory,Banner>
+     */
     public function category(): BelongsTo
     {
         return $this->belongsTo(BannerCategory::class, 'banner_category_id');
     }
 
-    public function registerMediaConversions(Media|null $media = null): void
+    public function registerMediaConversions(?Media $media = null): void
     {
         $this
             ->addMediaConversion('preview')
             ->fit(Fit::Contain, 300, 300)
             ->nonQueued();
     }
+
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('banners')
             ->singleFile();
     }
-
 }

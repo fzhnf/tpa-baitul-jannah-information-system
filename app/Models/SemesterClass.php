@@ -17,21 +17,41 @@ class SemesterClass extends Model
         'nama_semester_class',
     ];
 
+    /**
+     * Get the semester that owns the SemesterClass
+     *
+     * @return BelongsTo<Semester,SemesterClass>
+     */
     public function semester(): BelongsTo
     {
         return $this->belongsTo(Semester::class);
     }
 
-    public function teachers(): BelongsToMany
+    /**
+     * Get the teachers for the SemesterClass
+     *
+     * @return BelongsToMany<User,SemesterClass>
+     */
+    public function users(): BelongsToMany
     {
-        return $this->belongsToMany(Teacher::class, 'semester_class_teacher');
+        return $this->belongsToMany(User::class, 'semester_class_teacher');
     }
 
+    /**
+     * Get the students for the SemesterClass
+     *
+     * @return BelongsToMany<Student,SemesterClass>
+     */
     public function students(): BelongsToMany
     {
         return $this->belongsToMany(Student::class, 'semester_class_student');
     }
 
+    /**
+     * Get the class sessions for the SemesterClass
+     *
+     * @return HasMany<ClassSession,SemesterClass>
+     */
     public function classSessions(): HasMany
     {
         return $this->hasMany(ClassSession::class);

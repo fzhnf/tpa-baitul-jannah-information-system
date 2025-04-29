@@ -9,6 +9,7 @@ use Filament\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -19,8 +20,6 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\Permission\Traits\HasRoles;
 
 /**
- * 
- *
  * @property string $id
  * @property string $username
  * @property string $firstname
@@ -43,6 +42,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read int|null $roles_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \Laravel\Sanctum\PersonalAccessToken> $tokens
  * @property-read int|null $tokens_count
+ *
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newQuery()
@@ -62,13 +62,14 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User whereUsername($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User withoutPermission($permissions)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User withoutRole($roles, $guard = null)
+ *
  * @mixin \Eloquent
  */
-class User extends Authenticatable implements FilamentUser, MustVerifyEmail, HasAvatar, HasName, HasMedia
+class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia, HasName, MustVerifyEmail
 {
-    use InteractsWithMedia;
-    use HasUuids, HasRoles;
     use HasApiTokens, HasFactory, Notifiable;
+    use HasRoles, HasUuids;
+    use InteractsWithMedia;
 
     /**
      * The attributes that are mass assignable.
@@ -123,7 +124,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
     }
 
     // Define an accessor for the 'name' attribute
-    public function getNameAttribute()
+    public function getNameAttribute(): string
     {
         return "{$this->firstname} {$this->lastname}";
     }
@@ -133,10 +134,15 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
         return $this->hasRole(config('filament-shield.super_admin.name'));
     }
 
-    public function registerMediaConversions(Media|null $media = null): void
+    public function registerMediaConversions(?Media $media = null): void
     {
         $this->addMediaConversion('thumb')
             ->fit(Fit::Contain, 300, 300)
             ->nonQueued();
+    }
+
+    public function semesterClasses(): BelongsToMany
+    {
+        return $this->belongsToMany(SemesterClass::class, 'semester_class_teacher');
     }
 }
