@@ -112,7 +112,7 @@ class AttendanceResource extends Resource
         return [
             'index' => Pages\ListAttendances::route('/'),
             'create' => Pages\CreateAttendance::route('/create'),
-            // 'view' => Pages\ViewAttendance::route('/{record}'),
+            'view' => Pages\ViewAttendance::route('/{record}'),
             'edit' => Pages\EditAttendance::route('/{record}/edit'),
         ];
     }

@@ -8,11 +8,14 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class SemesterClassesRelationManager extends RelationManager
 {
     protected static string $relationship = 'semesterClasses';
+
+    protected static ?string $title = 'Classes';
+
+    protected static ?string $label = 'Class';
 
     public function form(Form $form): Form
     {
@@ -36,7 +39,7 @@ class SemesterClassesRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('id')
+            ->recordTitleAttribute('nama_semester_class')
             ->columns([
                 Tables\Columns\TextColumn::make('nama_semester_class')
                     ->label('Class Name')

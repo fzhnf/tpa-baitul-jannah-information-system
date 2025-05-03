@@ -93,7 +93,7 @@ class SemesterClassResource extends Resource
         return [
             'index' => Pages\ListSemesterClasses::route('/'),
             'create' => Pages\CreateSemesterClass::route('/create'),
-            // 'view' => Pages\ViewSemesterClass::route('/{record}'),
+            'view' => Pages\ViewSemesterClass::route('/{record}'),
             'edit' => Pages\EditSemesterClass::route('/{record}/edit'),
         ];
     }

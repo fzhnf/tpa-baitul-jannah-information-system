@@ -10,8 +10,6 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class AchievementResource extends Resource
 {
@@ -48,8 +46,8 @@ class AchievementResource extends Resource
                     ->label('Achievement Name'),
                 Tables\Columns\TextColumn::make('category')
                     ->badge()
-                    ->formatStateUsing(fn(string $state): string => ucfirst($state))
-                    ->color(fn(string $state): string => match ($state) {
+                    ->formatStateUsing(fn (string $state): string => ucfirst($state))
+                    ->color(fn (string $state): string => match ($state) {
                         'ummi' => 'primary',
                         'tahfidz' => 'success',
                         'doaHadist' => 'warning',
@@ -89,7 +87,7 @@ class AchievementResource extends Resource
         return [
             'index' => Pages\ListAchievements::route('/'),
             'create' => Pages\CreateAchievement::route('/create'),
-            // 'view' => Pages\ViewAchievement::route('/{record}'),
+            'view' => Pages\ViewAchievement::route('/{record}'),
             'edit' => Pages\EditAchievement::route('/{record}/edit'),
         ];
     }

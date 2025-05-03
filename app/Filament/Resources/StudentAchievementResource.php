@@ -16,7 +16,9 @@ class StudentAchievementResource extends Resource
     protected static ?string $model = StudentAchievement::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-star';
+
     protected static ?string $navigationGroup = 'Academic Management';
+
     protected static ?string $label = 'Student Achievement';
 
     public static function form(Form $form): Form
@@ -41,8 +43,7 @@ class StudentAchievementResource extends Resource
                     return $query->orderBy('date', 'desc');
                 })
                 ->getOptionLabelFromRecordUsing(
-                    fn($record) =>
-                    $record->semesterClass->nama_semester_class . ' - ' . $record->date->format('d M Y H:i')
+                    fn ($record) => $record->semesterClass->nama_semester_class.' - '.$record->date->format('d M Y H:i')
                 )
                 ->label('Class Session (Date)')
                 ->placeholder('e.g: 2025-05-03 15:00')
@@ -150,6 +151,7 @@ class StudentAchievementResource extends Resource
         return [
             'index' => Pages\ListStudentAchievements::route('/'),
             'create' => Pages\CreateStudentAchievement::route('/create'),
+            'view' => Pages\ViewStudentAchievement::route('/{record}'),
             'edit' => Pages\EditStudentAchievement::route('/{record}/edit'),
         ];
     }
