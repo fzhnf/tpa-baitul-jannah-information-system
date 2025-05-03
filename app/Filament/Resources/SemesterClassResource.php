@@ -11,7 +11,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class SemesterClassResource extends Resource
 {
@@ -34,7 +33,7 @@ class SemesterClassResource extends Resource
                         return $query->orderBy('school_year', 'desc')
                             ->orderBy('semester_enum', 'desc');
                     })
-                    ->getOptionLabelFromRecordUsing(fn($record) => "{$record->school_year} - Semester {$record->semester_enum}")
+                    ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->school_year} - Semester {$record->semester_enum}")
                     ->required()
                     ->searchable(),
                 Forms\Components\TextInput::make('nama_semester_class')
@@ -55,7 +54,7 @@ class SemesterClassResource extends Resource
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('semester.semester_enum')
-                    ->formatStateUsing(fn(string $state): string => "Semester $state")
+                    ->formatStateUsing(fn (string $state): string => "Semester $state")
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -83,9 +82,9 @@ class SemesterClassResource extends Resource
     public static function getRelations(): array
     {
         return [
-            RelationManagers\TeachersRelationManager::class,
-            RelationManagers\StudentsRelationManager::class,
             RelationManagers\ClassSessionsRelationManager::class,
+            RelationManagers\StudentsRelationManager::class,
+            RelationManagers\TeachersRelationManager::class,
         ];
     }
 
