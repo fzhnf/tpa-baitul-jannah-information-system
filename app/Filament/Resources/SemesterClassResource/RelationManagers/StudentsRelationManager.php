@@ -18,9 +18,24 @@ class StudentsRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('id')
+                Forms\Components\TextInput::make('student_name')
                     ->required()
+                    ->maxLength(255)
+                    ->label('Nama Murid'),
+                Forms\Components\TextInput::make('address')
                     ->maxLength(255),
+                Forms\Components\TextInput::make('guardian')
+                    ->label('Orang tua/ wali murid')
+                    ->maxLength(255),
+                Forms\Components\DatePicker::make('entry_date')->label('tanggal masuk'),
+                Forms\Components\FileUpload::make('profile_picture_url')
+                    ->image()
+                    ->directory('student-profiles')
+                    ->label('foto profil'),
+                Forms\Components\TextInput::make('guardian_number')
+                    ->tel()
+                    ->maxLength(255)
+                    ->label('Nomor telepon orang tua/ wali murid'),
             ]);
     }
 
@@ -29,7 +44,29 @@ class StudentsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('id')
             ->columns([
-                Tables\Columns\TextColumn::make('id'),
+                Tables\Columns\TextColumn::make('student_name')
+                    ->searchable()
+                    ->sortable()
+                    ->label('Student Name'),
+                Tables\Columns\ImageColumn::make('profile_picture_url')
+                    ->label('Profile Picture')
+                    ->circular(),
+                Tables\Columns\TextColumn::make('guardian')
+                    ->searchable()
+                    ->label('Guardian'),
+                Tables\Columns\TextColumn::make('guardian_number')
+                    ->label('Guardian Number'),
+                Tables\Columns\TextColumn::make('entry_date')
+                    ->date()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //

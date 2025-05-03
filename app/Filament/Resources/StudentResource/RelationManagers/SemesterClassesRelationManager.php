@@ -18,9 +18,18 @@ class SemesterClassesRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('id')
+                Forms\Components\Select::make('semester_id')
+                    ->relationship('semester', 'school_year', function (Builder $query) {
+                        return $query->orderBy('school_year', 'desc')
+                            ->orderBy('semester_enum', 'desc');
+                    })
+                    ->getOptionLabelFromRecordUsing(fn($record) => "{$record->school_year} - Semester {$record->semester_enum}")
                     ->required()
-                    ->maxLength(255),
+                    ->searchable(),
+                Forms\Components\TextInput::make('nama_semester_class')
+                    ->required()
+                    ->maxLength(255)
+                    ->label('Class Name'),
             ]);
     }
 
@@ -29,7 +38,23 @@ class SemesterClassesRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('id')
             ->columns([
-                Tables\Columns\TextColumn::make('id'),
+                Tables\Columns\TextColumn::make('nama_semester_class')
+                    ->label('Class Name')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('semester.school_year')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('semester.semester_enum')
+                    ->formatStateUsing(fn(string $state): string => "Semester $state")
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //

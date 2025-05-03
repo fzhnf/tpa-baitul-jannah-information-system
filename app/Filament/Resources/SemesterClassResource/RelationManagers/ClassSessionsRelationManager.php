@@ -18,9 +18,16 @@ class ClassSessionsRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('id')
+                Forms\Components\Select::make('semester_class_id')
+                    ->relationship('semesterClass', 'nama_semester_class')
                     ->required()
-                    ->maxLength(255),
+                    ->label('Class')
+                    ->searchable(),
+                Forms\Components\DateTimePicker::make('date')
+                    ->required(),
+                Forms\Components\Textarea::make('description')
+                    ->maxLength(65535)
+                    ->columnSpanFull(),
             ]);
     }
 
@@ -29,7 +36,25 @@ class ClassSessionsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('id')
             ->columns([
-                Tables\Columns\TextColumn::make('id'),
+                Tables\Columns\TextColumn::make('semesterClass.nama_semester_class')
+                    ->sortable()
+                    ->searchable()
+                    ->label('Class'),
+                Tables\Columns\TextColumn::make('semesterClass.semester.school_year')
+                    ->sortable()
+                    ->searchable()
+                    ->label('School Year'),
+                Tables\Columns\TextColumn::make('date')
+                    ->dateTime()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //

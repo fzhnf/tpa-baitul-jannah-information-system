@@ -44,7 +44,8 @@ class StudentAchievementResource extends Resource
                     fn($record) =>
                     $record->semesterClass->nama_semester_class . ' - ' . $record->date->format('d M Y H:i')
                 )
-                ->label('Class Session')
+                ->label('Class Session (Date)')
+                ->placeholder('e.g: 2025-05-03 15:00')
                 ->required()
                 ->searchable(),
 

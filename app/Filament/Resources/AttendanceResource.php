@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\AttendanceResource\Pages;
+use App\Filament\Resources\AttendanceResource\RelationManagers;
 use App\Models\Attendance;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -10,6 +11,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class AttendanceResource extends Resource
 {
@@ -27,10 +29,11 @@ class AttendanceResource extends Resource
                     ->relationship('classSession', 'date', function (Builder $query) {
                         return $query->orderBy('date', 'desc');
                     })
-                    ->getOptionLabelFromRecordUsing(fn ($record) => $record->semesterClass->nama_semester_class.' - '.$record->date->format('d M Y H:i'))
+                    ->getOptionLabelFromRecordUsing(fn($record) => $record->semesterClass->nama_semester_class . ' - ' . $record->date->format('d M Y H:i'))
+                    ->placeholder('e.g: 2025-05-03 15:00')
                     ->required()
                     ->searchable()
-                    ->label('Class Session'),
+                    ->label('Class Session (Date)'),
                 Forms\Components\Select::make('student_id')
                     ->relationship('student', 'student_name')
                     ->required()
@@ -65,7 +68,7 @@ class AttendanceResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         'hadir' => 'success',
                         'sakit' => 'info',
                         'ijin' => 'warning',
