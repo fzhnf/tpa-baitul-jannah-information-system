@@ -10,8 +10,6 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class SemesterResource extends Resource
 {
@@ -47,7 +45,7 @@ class SemesterResource extends Resource
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('semester_enum')
-                    ->formatStateUsing(fn(string $state): string => "Semester $state")
+                    ->formatStateUsing(fn (string $state): string => "Semester $state")
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -84,7 +82,7 @@ class SemesterResource extends Resource
         return [
             'index' => Pages\ListSemesters::route('/'),
             'create' => Pages\CreateSemester::route('/create'),
-            // 'view' => Pages\ViewSemester::route('/{record}'),
+            'view' => Pages\ViewSemester::route('/{record}'),
             'edit' => Pages\EditSemester::route('/{record}/edit'),
         ];
     }

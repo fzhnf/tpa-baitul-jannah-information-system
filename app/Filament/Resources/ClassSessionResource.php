@@ -10,8 +10,6 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ClassSessionResource extends Resource
 {
@@ -89,7 +87,7 @@ class ClassSessionResource extends Resource
         return [
             'index' => Pages\ListClassSessions::route('/'),
             'create' => Pages\CreateClassSession::route('/create'),
-            // 'view' => Pages\ViewClassSession::route('/{record}'),
+            'view' => Pages\ViewClassSession::route('/{record}'),
             'edit' => Pages\EditClassSession::route('/{record}/edit'),
         ];
     }
