@@ -89,6 +89,7 @@ class ClassSessionResource extends Resource
             'create' => Pages\CreateClassSession::route('/create'),
             'view' => Pages\ViewClassSession::route('/{record}'),
             'edit' => Pages\EditClassSession::route('/{record}/edit'),
+            'manage' => Pages\ManageClassSession::route('/{record}/manage'),
         ];
     }
 }
