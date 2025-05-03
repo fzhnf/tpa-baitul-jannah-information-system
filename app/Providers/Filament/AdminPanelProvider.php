@@ -44,6 +44,7 @@ class AdminPanelProvider extends PanelProvider
             ->colors(fn (GeneralSettings $settings) => $settings->site_theme)
             ->databaseNotifications()->databaseNotificationsPolling('30s')
             ->spa()
+            ->darkMode(condition: false)
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
             ->sidebarCollapsibleOnDesktop()
             ->navigationGroups([
