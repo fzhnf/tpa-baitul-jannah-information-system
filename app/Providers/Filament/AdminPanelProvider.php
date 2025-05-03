@@ -5,7 +5,7 @@ namespace App\Providers\Filament;
 use App\Filament\Pages\Auth\EmailVerification;
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Auth\RequestPasswordReset;
-/* use App\Filament\Resources\MenuResource; */
+use App\Filament\Resources\MenuResource;
 use App\Http\Middleware\FilamentRobotsMiddleware;
 use App\Livewire\MyProfileExtended;
 use App\Settings\GeneralSettings;
@@ -37,11 +37,11 @@ class AdminPanelProvider extends PanelProvider
             ->login(Login::class)
             ->passwordReset(RequestPasswordReset::class)
             ->emailVerification(EmailVerification::class)
-            ->favicon(fn(GeneralSettings $settings) => Storage::url($settings->site_favicon))
-            ->brandName(fn(GeneralSettings $settings) => $settings->brand_name)
-            ->brandLogo(fn(GeneralSettings $settings) => Storage::url($settings->brand_logo))
-            ->brandLogoHeight(fn(GeneralSettings $settings) => $settings->brand_logoHeight)
-            ->colors(fn(GeneralSettings $settings) => $settings->site_theme)
+            ->favicon(fn (GeneralSettings $settings) => Storage::url($settings->site_favicon))
+            ->brandName(fn (GeneralSettings $settings) => $settings->brand_name)
+            ->brandLogo(fn (GeneralSettings $settings) => Storage::url($settings->brand_logo))
+            ->brandLogoHeight(fn (GeneralSettings $settings) => $settings->brand_logoHeight)
+            ->colors(fn (GeneralSettings $settings) => $settings->site_theme)
             ->databaseNotifications()->databaseNotificationsPolling('30s')
             ->spa()
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
@@ -62,14 +62,6 @@ class AdminPanelProvider extends PanelProvider
                 Navigation\NavigationGroup::make()
                     ->label(__('menu.nav_group.activities'))
                     ->collapsed(),
-            ])
-            ->navigationItems([
-                Navigation\NavigationItem::make('Log Viewer') // !! To-Do: lang
-                    ->visible(fn(): bool => auth()->user()->can('access_log_viewer'))
-                    ->url(config('app.url') . '/' . config('log-viewer.route_path'), shouldOpenInNewTab: true)
-                    ->icon('fluentui-document-bullet-list-multiple-20-o')
-                    ->group(__('menu.nav_group.activities'))
-                    ->sort(99),
             ])
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
@@ -126,19 +118,19 @@ class AdminPanelProvider extends PanelProvider
                     ->myProfileComponents([
                         'personal_info' => MyProfileExtended::class,
                     ]),
-                /* \Datlechin\FilamentMenuBuilder\FilamentMenuBuilderPlugin::make() */
-                /*     ->usingResource(MenuResource::class) */
-                /*     ->addMenuPanels([ */
-                /*         \Datlechin\FilamentMenuBuilder\MenuPanel\StaticMenuPanel::make() */
-                /*             ->addMany([ */
-                /*                 'Home' => url('/'), */
-                /*                 'Blog' => url('/blog'), */
-                /*             ]) */
-                /*             ->description('Default menus') */
-                /*             ->collapsed(true) */
-                /*             ->collapsible(true) */
-                /*             ->paginate(perPage: 5, condition: true) */
-                /*     ]) */
+                \Datlechin\FilamentMenuBuilder\FilamentMenuBuilderPlugin::make()
+                    ->usingResource(MenuResource::class)
+                    ->addMenuPanels([
+                        \Datlechin\FilamentMenuBuilder\MenuPanel\StaticMenuPanel::make()
+                            ->addMany([
+                                'Home' => url('/'),
+                                'Blog' => url('/blog'),
+                            ])
+                            ->description('Default menus')
+                            ->collapsed(true)
+                            ->collapsible(true)
+                            ->paginate(perPage: 5, condition: true),
+                    ]),
             ]);
     }
 }
