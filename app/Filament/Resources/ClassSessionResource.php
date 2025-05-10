@@ -66,6 +66,12 @@ class ClassSessionResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\ViewAction::make(),
+                Tables\Actions\Action::make('manage')
+                    ->label('Manage')
+                    ->icon('heroicon-o-cog')
+                    ->url(fn(ClassSession $record): string => static::getUrl('manage', ['record' => $record]))
+                    ->color('success'),
+
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

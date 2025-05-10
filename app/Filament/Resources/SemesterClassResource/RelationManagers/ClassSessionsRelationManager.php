@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SemesterClassResource\RelationManagers;
 
+use App\Models\ClassSession;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -65,6 +66,15 @@ class ClassSessionsRelationManager extends RelationManager
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+                Tables\Actions\Action::make('manage')
+                    ->label('Manage')
+                    ->icon('heroicon-o-cog')
+                    ->url(
+                        fn(ClassSession $record): string =>
+                        \App\Filament\Resources\ClassSessionResource::getUrl('manage', ['record' => $record])
+                    )
+                    ->color('success'),
+
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
