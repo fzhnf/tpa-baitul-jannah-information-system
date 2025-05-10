@@ -20,7 +20,7 @@ class AttendanceFactory extends Factory
         return [
             'class_session_id' => ClassSession::factory(),
             'student_id' => Student::factory(),
-            'status' => fake()->randomElement(['present', 'absent', 'late']),
+            'status' => fake()->randomElement(['hadir', 'sakit', 'ijin', 'absen']),
             'remarks' => fake()->sentence(),
         ];
     }
