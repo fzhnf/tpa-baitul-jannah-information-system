@@ -15,7 +15,9 @@ class AchievementsTableSeeder extends Seeder
 {
     public function run(): void
     {
+        ini_set('memory_limit', '512M');
 
+        // Import achievements from CSV
         $csvFile = fopen(base_path('database/data/The Quran Dataset_trimmed.csv'), 'r');
         fgetcsv($csvFile); // skip header
 
@@ -25,6 +27,7 @@ class AchievementsTableSeeder extends Seeder
 
         \DB::beginTransaction();
         try {
+            // Process achievements CSV
             while (($data = fgetcsv($csvFile)) !== false) {
                 $achievementData[] = [
                     'achievement_name' => "Q.S. {$data[1]}/{$data[0]}: {$data[2]} (Juz {$data[3]})",
@@ -59,10 +62,20 @@ class AchievementsTableSeeder extends Seeder
                 Semester::create(['school_year' => '2024/2025', 'semester_enum' => 1]),
             ];
 
-            // Create classes for each semester
+            // Create classes for each semester and assign students
             $classes = [];
             foreach ($semesters as $semester) {
                 $semesterClasses = SemesterClass::factory(5)->create(['semester_id' => $semester->id]);
+
+                foreach ($semesterClasses as $class) {
+                    // Assign 3-8 random students to each class
+                    $randomStudentIds = fake()->randomElements(
+                        $studentIds,
+                        fake()->numberBetween(3, min(8, count($studentIds)))
+                    );
+                    $class->students()->attach($randomStudentIds);
+                }
+
                 $classes = array_merge($classes, $semesterClasses->toArray());
             }
 
@@ -72,17 +85,19 @@ class AchievementsTableSeeder extends Seeder
                 $sessions = ClassSession::factory(3)->create(['semester_class_id' => $class['id']]);
                 $classSessions = array_merge($classSessions, $sessions->toArray());
             }
-            $classSessionIds = array_column($classSessions, 'id');
 
             // Get existing achievements
             $achievementIds = Achievement::pluck('id')->toArray();
 
-            // Create attendances
-            foreach ($classSessionIds as $sessionId) {
-                foreach ($studentIds as $studentId) {
-                    if (rand(0, 10) > 2) { // 80% chance of having attendance
+            // Create attendances only for enrolled students
+            foreach ($classSessions as $session) {
+                $class = SemesterClass::find($session['semester_class_id']);
+                $enrolledStudentIds = $class->students()->pluck('id')->toArray();
+
+                foreach ($enrolledStudentIds as $studentId) {
+                    if (rand(0, 10) > 2) { // 80% chance of attendance
                         Attendance::create([
-                            'class_session_id' => $sessionId,
+                            'class_session_id' => $session['id'],
                             'student_id' => $studentId,
                             'status' => fake()->randomElement(['hadir', 'sakit', 'ijin', 'absen']),
                             'remarks' => fake()->sentence(),
@@ -91,13 +106,13 @@ class AchievementsTableSeeder extends Seeder
                 }
             }
 
-            // Student achievements
+            // Create student achievements
             $studentAchievementData = [];
             foreach (range(1, 30) as $_) {
                 $studentAchievementData[] = [
                     'student_id' => fake()->randomElement($studentIds),
                     'achievement_id' => fake()->randomElement($achievementIds),
-                    'class_session_id' => fake()->randomElement($classSessionIds),
+                    'class_session_id' => fake()->randomElement(array_column($classSessions, 'id')),
                     'tanggal' => fake()->date(),
                     'keterangan' => fake()->sentence(),
                     'catatan' => fake()->paragraph(),
