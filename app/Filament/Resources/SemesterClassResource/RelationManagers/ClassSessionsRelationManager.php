@@ -67,7 +67,7 @@ class ClassSessionsRelationManager extends RelationManager
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
                 Tables\Actions\Action::make('manage')
-                    ->label('Manage')
+                    ->label('Mengelola')
                     ->icon('heroicon-o-cog')
                     ->url(
                         fn(ClassSession $record): string =>

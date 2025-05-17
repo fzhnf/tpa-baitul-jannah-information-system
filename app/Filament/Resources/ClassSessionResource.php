@@ -48,7 +48,12 @@ class ClassSessionResource extends Resource
                 Tables\Columns\TextColumn::make('semesterClass.nama_semester_class')
                     ->sortable()
                     ->searchable()
-                    ->label('Kelas'),
+                    ->label('Kelas')
+                    ->tooltip(fn($record) => $record->semesterClass->nama_semester_class)
+                    ->extraAttributes([
+                        'class' => 'max-w-[200px] whitespace-nowrap overflow-hidden relative pr-4',
+                        'style' => 'mask-image: linear-gradient(to right, black 80%, transparent); -webkit-mask-image: linear-gradient(to right, black 80%, transparent);',
+                    ]),
                 Tables\Columns\TextColumn::make('semesterClass.semester.school_year')
                     ->sortable()
                     ->searchable()
@@ -73,7 +78,7 @@ class ClassSessionResource extends Resource
                 Tables\Actions\EditAction::make()->label('Perbaharui'),
                 Tables\Actions\ViewAction::make()->label('Lihat'),
                 Tables\Actions\Action::make('manage')
-                    ->label('Manage')
+                    ->label('Mengelola')
                     ->icon('heroicon-o-cog')
                     ->url(fn(ClassSession $record): string => static::getUrl('manage', ['record' => $record]))
                     ->color('success'),
