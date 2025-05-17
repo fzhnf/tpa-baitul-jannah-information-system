@@ -14,10 +14,13 @@ use Filament\Tables\Table;
 class StudentResource extends Resource
 {
     protected static ?string $model = Student::class;
+    
+    protected static ?string $modelLabel = "Murid";
+    protected static ?string $pluralLabel = "Murid";
 
     protected static ?string $navigationIcon = 'heroicon-o-user';
 
-    protected static ?string $navigationGroup = 'Academic Management';
+    protected static ?string $navigationGroup = 'Manajemen Akademik';
 
     public static function form(Form $form): Form
     {
@@ -28,15 +31,17 @@ class StudentResource extends Resource
                     ->maxLength(255)
                     ->label('Nama Murid'),
                 Forms\Components\TextInput::make('address')
+                    ->label('Alamat')
                     ->maxLength(255),
                 Forms\Components\TextInput::make('guardian')
                     ->label('Orang tua/ wali murid')
                     ->maxLength(255),
-                Forms\Components\DatePicker::make('entry_date')->label('tanggal masuk'),
+                Forms\Components\DatePicker::make('entry_date')
+                    ->label('Tanggal masuk'),
                 Forms\Components\FileUpload::make('profile_picture_url')
                     ->image()
                     ->directory('student-profiles')
-                    ->label('foto profil'),
+                    ->label('Foto profil'),
                 Forms\Components\TextInput::make('guardian_number')
                     ->tel()
                     ->maxLength(255)
@@ -51,17 +56,18 @@ class StudentResource extends Resource
                 Tables\Columns\TextColumn::make('student_name')
                     ->searchable()
                     ->sortable()
-                    ->label('Student Name'),
+                    ->label('Nama Murid'),
                 Tables\Columns\ImageColumn::make('profile_picture_url')
-                    ->label('Profile Picture')
+                    ->label('Foto Profile')
                     ->circular(),
                 Tables\Columns\TextColumn::make('guardian')
                     ->searchable()
-                    ->label('Guardian'),
+                    ->label('Orang Tua / Wali Murid'),
                 Tables\Columns\TextColumn::make('guardian_number')
-                    ->label('Guardian Number'),
+                    ->label('Nomor Orang Tua / Wali Murid'),
                 Tables\Columns\TextColumn::make('entry_date')
                     ->date()
+                    ->label('Tanggal Masuk')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -76,8 +82,10 @@ class StudentResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->label('Perbaharui'),
+                Tables\Actions\ViewAction::make()
+                    ->label('Lihat'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

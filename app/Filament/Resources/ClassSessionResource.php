@@ -15,9 +15,12 @@ class ClassSessionResource extends Resource
 {
     protected static ?string $model = ClassSession::class;
 
+    protected static ?string $modelLabel = "Sesi Kelas";
+    protected static ?string $pluralLabel = "Sesi Kelas";
+
     protected static ?string $navigationIcon = 'heroicon-o-clock';
 
-    protected static ?string $navigationGroup = 'Academic Management';
+    protected static ?string $navigationGroup = 'Manajemen Akademik';
 
     public static function form(Form $form): Form
     {
@@ -26,13 +29,15 @@ class ClassSessionResource extends Resource
                 Forms\Components\Select::make('semester_class_id')
                     ->relationship('semesterClass', 'nama_semester_class')
                     ->required()
-                    ->label('Class')
+                    ->label('Kelas')
                     ->searchable(),
                 Forms\Components\DateTimePicker::make('date')
-                    ->required(),
+                    ->required()
+                    ->label('Tanggal & Waktu'),
                 Forms\Components\Textarea::make('description')
                     ->maxLength(65535)
-                    ->columnSpanFull(),
+                    ->columnSpanFull()
+                    ->label('Deskripsi'),
             ]);
     }
 
@@ -43,14 +48,15 @@ class ClassSessionResource extends Resource
                 Tables\Columns\TextColumn::make('semesterClass.nama_semester_class')
                     ->sortable()
                     ->searchable()
-                    ->label('Class'),
+                    ->label('Kelas'),
                 Tables\Columns\TextColumn::make('semesterClass.semester.school_year')
                     ->sortable()
                     ->searchable()
-                    ->label('School Year'),
+                    ->label('Tahun Ajaran'),
                 Tables\Columns\TextColumn::make('date')
                     ->dateTime()
-                    ->sortable(),
+                    ->sortable()
+                    ->label('Tanggal & Waktu'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -64,8 +70,10 @@ class ClassSessionResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->label('Perbaharui'),
+                Tables\Actions\ViewAction::make()
+                    ->label('Liat'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

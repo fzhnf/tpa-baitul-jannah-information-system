@@ -17,9 +17,12 @@ class AttendanceResource extends Resource
 {
     protected static ?string $model = Attendance::class;
 
+    protected static ?string $modelLabel = "Absensi";
+    protected static ?string $pluralLabel = "Absensi";
+
     protected static ?string $navigationIcon = 'heroicon-o-clipboard';
 
-    protected static ?string $navigationGroup = 'Academic Management';
+    protected static ?string $navigationGroup = 'Manajemen Akademik';
 
     public static function form(Form $form): Form
     {
@@ -33,7 +36,7 @@ class AttendanceResource extends Resource
                     ->placeholder('e.g: 2025-05-03 15:00')
                     ->required()
                     ->searchable()
-                    ->label('Class Session (Date)'),
+                    ->label('Tanggal Sesi Kelas'),
                 Forms\Components\Select::make('student_id')
                     ->relationship('student', 'student_name')
                     ->required()
@@ -45,7 +48,8 @@ class AttendanceResource extends Resource
                         'ijin' => 'Ijin',
                         'absen' => 'Absen',
                     ])
-                    ->required(),
+                    ->required()
+                    ->label('Status'),
                 Forms\Components\TextInput::make('remarks')
                     ->maxLength(255),
             ]);
@@ -58,14 +62,15 @@ class AttendanceResource extends Resource
                 Tables\Columns\TextColumn::make('classSession.semesterClass.nama_semester_class')
                     ->sortable()
                     ->searchable()
-                    ->label('Class'),
+                    ->label('Kelas'),
                 Tables\Columns\TextColumn::make('classSession.date')
                     ->dateTime()
                     ->sortable()
-                    ->label('Session Date'),
+                    ->label('Tanggal Sesi'),
                 Tables\Columns\TextColumn::make('student.student_name')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->label('Nama Murid'),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->color(fn(string $state): string => match ($state) {
@@ -73,7 +78,8 @@ class AttendanceResource extends Resource
                         'sakit' => 'info',
                         'ijin' => 'warning',
                         'absen' => 'danger',
-                    }),
+                    })
+                    ->label('Status'),
                 Tables\Columns\TextColumn::make('remarks')
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
@@ -90,8 +96,10 @@ class AttendanceResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->label('Perbaharui'),
+                Tables\Actions\ViewAction::make()
+                    ->label('Lihat'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

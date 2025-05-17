@@ -15,9 +15,12 @@ class AchievementResource extends Resource
 {
     protected static ?string $model = Achievement::class;
 
+    protected static ?string $modelLabel = "Pencapaian";
+    protected static ?string $pluralLabel = "Pencapaian";
+
     protected static ?string $navigationIcon = 'heroicon-o-trophy';
 
-    protected static ?string $navigationGroup = 'Academic Management';
+    protected static ?string $navigationGroup = 'Manajemen Akademik';
 
     public static function form(Form $form): Form
     {
@@ -26,14 +29,15 @@ class AchievementResource extends Resource
                 Forms\Components\TextInput::make('achievement_name')
                     ->required()
                     ->maxLength(255)
-                    ->label('Achievement Name'),
+                    ->label('Pencapaian'),
                 Forms\Components\Select::make('category')
                     ->options([
                         'ummi' => 'Ummi',
                         'tahfidz' => 'Tahfidz',
                         'doaHadist' => 'Doa Hadist',
                     ])
-                    ->required(),
+                    ->required()
+                    ->label('Kategori'),
             ]);
     }
 
@@ -43,7 +47,7 @@ class AchievementResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('achievement_name')
                     ->searchable()
-                    ->label('Achievement Name'),
+                    ->label('Pencapaian'),
                 Tables\Columns\TextColumn::make('category')
                     ->badge()
                     ->formatStateUsing(fn (string $state): string => ucfirst($state))
@@ -51,7 +55,8 @@ class AchievementResource extends Resource
                         'ummi' => 'primary',
                         'tahfidz' => 'success',
                         'doaHadist' => 'warning',
-                    }),
+                    })
+                    ->label('Kategori'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -65,8 +70,10 @@ class AchievementResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->label('Perbaharui'),
+                Tables\Actions\ViewAction::make()
+                    ->label('Lihat'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

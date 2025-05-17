@@ -15,9 +15,12 @@ class StudentAchievementResource extends Resource
 {
     protected static ?string $model = StudentAchievement::class;
 
+    protected static ?string $modelLabel = "Pencapaian Murid";
+    protected static ?string $pluralLabel = "Pencapaian Murid";
+
     protected static ?string $navigationIcon = 'heroicon-o-star';
 
-    protected static ?string $navigationGroup = 'Academic Management';
+    protected static ?string $navigationGroup = 'Manajemen Akademik';
 
     protected static ?string $label = 'Student Achievement';
 
@@ -36,7 +39,8 @@ class StudentAchievementResource extends Resource
             Forms\Components\Select::make('student_id')
                 ->relationship('student', 'student_name')
                 ->required()
-                ->searchable(),
+                ->searchable()
+                ->label('Nama Murid'),
 
             Forms\Components\Select::make('class_session_id')
                 ->relationship('classSession', 'date', function (Builder $query) {
@@ -45,29 +49,30 @@ class StudentAchievementResource extends Resource
                 ->getOptionLabelFromRecordUsing(
                     fn ($record) => $record->semesterClass->nama_semester_class.' - '.$record->date->format('d M Y H:i')
                 )
-                ->label('Class Session (Date)')
+                ->label('Sesi Kelas')
                 ->placeholder('e.g: 2025-05-03 15:00')
                 ->required()
                 ->searchable(),
 
             Forms\Components\DatePicker::make('tanggal')
                 ->required()
-                ->label('Date'),
+                ->label('Tanggal'),
 
             Forms\Components\Select::make('achievement_id')
                 ->relationship('achievement', 'achievement_name')
                 ->required()
-                ->searchable(),
+                ->searchable()
+                ->label('Pencapaian'),
 
             Forms\Components\TextInput::make('keterangan')
                 ->maxLength(255)
-                ->label('Description'),
+                ->label('Keterangan'),
 
             Forms\Components\Textarea::make('catatan')
                 ->maxLength(65535)
-                ->label('Notes'),
+                ->label('Catatan'),
 
-            Forms\Components\Section::make('Evaluation')->schema([
+            Forms\Components\Section::make('Evaluasi')->schema([
                 Forms\Components\Select::make('makruj')
                     ->options($gradeOptions)
                     ->default('-'),
@@ -96,27 +101,27 @@ class StudentAchievementResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('student.student_name')
-                    ->label('Student')
+                    ->label('Murid')
                     ->searchable()
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('classSession.date')
-                    ->label('Class Date')
+                    ->label('Sesi Kelas')
                     ->date()
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('achievement.achievement_name')
-                    ->label('Achievement')
+                    ->label('Pencapaian')
                     ->searchable()
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('tanggal')
-                    ->label('Date')
+                    ->label('Tanggal')
                     ->date()
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('keterangan')
-                    ->label('Description')
+                    ->label('Keterangan')
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('makruj')->sortable(),
@@ -134,7 +139,8 @@ class StudentAchievementResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->label('Perbaharui'),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),

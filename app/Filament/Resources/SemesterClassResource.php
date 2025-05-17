@@ -16,13 +16,12 @@ class SemesterClassResource extends Resource
 {
     protected static ?string $model = SemesterClass::class;
 
+    protected static ?string $modelLabel = "Kelas";
+    protected static ?string $pluralLabel = "Kelas";
+
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
-    protected static ?string $navigationGroup = 'Academic Management';
-
-    protected static ?string $label = 'Class';
-
-    protected static ?string $pluralLabel = 'Classes';
+    protected static ?string $navigationGroup = 'Manajemen Akademik';
 
     public static function form(Form $form): Form
     {
@@ -39,7 +38,7 @@ class SemesterClassResource extends Resource
                 Forms\Components\TextInput::make('nama_semester_class')
                     ->required()
                     ->maxLength(255)
-                    ->label('Class Name'),
+                    ->label('Nama Kelas'),
             ]);
     }
 
@@ -48,14 +47,16 @@ class SemesterClassResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('nama_semester_class')
-                    ->label('Class Name')
+                    ->label('Nama Kelas')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('semester.school_year')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->label('Tahun Ajaran'),
                 Tables\Columns\TextColumn::make('semester.semester_enum')
                     ->formatStateUsing(fn(string $state): string => "Semester $state")
-                    ->sortable(),
+                    ->sortable()
+                    ->label('Semester'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -69,8 +70,10 @@ class SemesterClassResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->label('Perbaharui'),
+                Tables\Actions\ViewAction::make()
+                    ->label('Lihat'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
