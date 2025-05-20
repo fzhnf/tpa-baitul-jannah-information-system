@@ -67,8 +67,11 @@ use Spatie\Permission\Traits\HasRoles;
  */
 class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia, HasName, MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, Notifiable;
-    use HasRoles, HasUuids;
+    use HasApiTokens;
+    use HasFactory;
+    use Notifiable;
+    use HasRoles;
+    use HasUuids;
     use InteractsWithMedia;
 
     /**
@@ -103,6 +106,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
 
     public function getFilamentName(): string
     {
@@ -140,7 +144,9 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasMedia,
             ->fit(Fit::Contain, 300, 300)
             ->nonQueued();
     }
-
+    /**
+     * @return BelongsToMany<SemesterClass,User>
+     */
     public function semesterClasses(): BelongsToMany
     {
         return $this->belongsToMany(SemesterClass::class, 'semester_class_teacher');

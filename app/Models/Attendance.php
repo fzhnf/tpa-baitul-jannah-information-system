@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * 
+ *
  *
  * @property int $id
  * @property int $class_session_id
@@ -41,11 +41,16 @@ class Attendance extends Model
         'remarks',
     ];
 
+    /**
+     * @return BelongsTo<ClassSession,Attendance>
+     */
     public function classSession(): BelongsTo
     {
         return $this->belongsTo(ClassSession::class);
     }
-
+    /**
+     * @return BelongsTo<Student,Attendance>
+     */
     public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class);
