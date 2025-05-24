@@ -14,6 +14,8 @@ class AttendancesRelationManager extends RelationManager
 {
     protected static string $relationship = 'attendances';
 
+    protected static ?string $title = 'Absensi';
+
     public function form(Form $form): Form
     {
         return $form
@@ -26,9 +28,10 @@ class AttendancesRelationManager extends RelationManager
                     ->placeholder('e.g: 2025-05-03 15:00')
                     ->required()
                     ->searchable()
-                    ->label('Class Session (Date)'),
+                    ->label('Sesi Kelas'),
                 Forms\Components\Select::make('student_id')
                     ->relationship('student', 'student_name')
+                    ->label('Murid')
                     ->required()
                     ->searchable(),
                 Forms\Components\Select::make('status')
@@ -38,9 +41,11 @@ class AttendancesRelationManager extends RelationManager
                         'ijin' => 'Ijin',
                         'absen' => 'Absen',
                     ])
+                    ->label('Status')
                     ->required(),
                 Forms\Components\TextInput::make('remarks')
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->label('Keterangan'),
             ]);
     }
 
@@ -52,13 +57,14 @@ class AttendancesRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('classSession.semesterClass.nama_semester_class')
                     ->sortable()
                     ->searchable()
-                    ->label('Class'),
+                    ->label('Kelas'),
                 Tables\Columns\TextColumn::make('classSession.date')
                     ->dateTime()
                     ->sortable()
-                    ->label('Session Date'),
+                    ->label('Tanggal Sesi'),
                 Tables\Columns\TextColumn::make('student.student_name')
                     ->sortable()
+                    ->label('Nama Murid')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
@@ -67,9 +73,11 @@ class AttendancesRelationManager extends RelationManager
                         'sakit' => 'info',
                         'ijin' => 'warning',
                         'absen' => 'danger',
-                    }),
+                    })
+                    ->label('Status'),
                 Tables\Columns\TextColumn::make('remarks')
                     ->searchable()
+                    ->label('Keterangan')
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -84,11 +92,14 @@ class AttendancesRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()
+                    ->label('Absensi Baru'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->label('Perbaharui'),
+                Tables\Actions\DeleteAction::make()
+                    ->label('Hapus'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

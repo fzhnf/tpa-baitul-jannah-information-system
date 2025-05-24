@@ -21,7 +21,7 @@ use Illuminate\Support\Str;
 class TeachersRelationManager extends RelationManager
 {
     protected static string $relationship = 'users';
-    protected static ?string $title = 'Teachers';
+    protected static ?string $title = 'Guru';
     protected static ?string $modelLabel = 'Teacher';
 
     public function form(Form $form): Form
@@ -54,13 +54,15 @@ class TeachersRelationManager extends RelationManager
                                     ->dehydrateStateUsing(fn(string $state): string => Hash::make($state))
                                     ->dehydrated(fn(?string $state): bool => filled($state))
                                     ->revealable()
-                                    ->required(),
+                                    ->required()
+                                    ->label('Password'),
                                 Forms\Components\TextInput::make('passwordConfirmation')
                                     ->password()
                                     ->dehydrateStateUsing(fn(string $state): string => Hash::make($state))
                                     ->dehydrated(fn(?string $state): bool => filled($state))
                                     ->revealable()
                                     ->same('password')
+                                    ->label('Konfirmasi Password')
                                     ->required(),
                             ])
                             ->compact()
@@ -90,6 +92,7 @@ class TeachersRelationManager extends RelationManager
                             ->schema([
                                 Forms\Components\TextInput::make('username')
                                     ->required()
+                                    ->label('Username')
                                     ->maxLength(255)
                                     ->live()
                                     ->rules(function ($record) {
@@ -103,6 +106,7 @@ class TeachersRelationManager extends RelationManager
                                 Forms\Components\TextInput::make('email')
                                     ->email()
                                     ->required()
+                                    ->label('Email')
                                     ->maxLength(255)
                                     ->rules(function ($record) {
                                         $userId = $record?->id;
@@ -114,10 +118,12 @@ class TeachersRelationManager extends RelationManager
 
                                 Forms\Components\TextInput::make('firstname')
                                     ->required()
+                                    ->label('Nama Depan')
                                     ->maxLength(255),
 
                                 Forms\Components\TextInput::make('lastname')
                                     ->required()
+                                    ->label('Nama Belakang')
                                     ->maxLength(255),
                             ])
                             ->columns(2),
@@ -154,13 +160,15 @@ class TeachersRelationManager extends RelationManager
                     ->wrap(),
                 Tables\Columns\TextColumn::make('username')->label('Username')
                     ->description(fn(Model $record) => $record->firstname . ' ' . $record->lastname)
-                    ->searchable(),
+                    ->searchable()
+                    ->label('Username'),
                 Tables\Columns\TextColumn::make('roles.name')->label('Role')
                     ->formatStateUsing(fn($state): string => Str::headline($state))
                     ->colors(['info'])
                     ->badge(),
                 Tables\Columns\TextColumn::make('email')
-                    ->searchable(),
+                    ->searchable()
+                    ->label('Email'),
                 Tables\Columns\TextColumn::make('email_verified_at')->label('Verified at')
                     ->dateTime()
                     ->sortable(),
@@ -177,13 +185,18 @@ class TeachersRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
-                Tables\Actions\AttachAction::make(),
+                Tables\Actions\CreateAction::make()
+                    ->label('Guru Baru'),
+                Tables\Actions\AttachAction::make()
+                    ->label('Masukkan Guru'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DetachAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->label('Perbaharui'),
+                Tables\Actions\DetachAction::make()
+                    ->label('Keluarkan'),
+                Tables\Actions\DeleteAction::make()
+                    ->label('Hapus'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

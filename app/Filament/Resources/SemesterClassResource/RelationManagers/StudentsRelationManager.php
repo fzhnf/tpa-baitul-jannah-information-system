@@ -14,6 +14,8 @@ class StudentsRelationManager extends RelationManager
 {
     protected static string $relationship = 'students';
 
+    protected static ?string $title = 'Murid';
+
     public function form(Form $form): Form
     {
         return $form
@@ -23,15 +25,16 @@ class StudentsRelationManager extends RelationManager
                     ->maxLength(255)
                     ->label('Nama Murid'),
                 Forms\Components\TextInput::make('address')
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->label('Alamat'),
                 Forms\Components\TextInput::make('guardian')
                     ->label('Orang tua/ wali murid')
                     ->maxLength(255),
-                Forms\Components\DatePicker::make('entry_date')->label('tanggal masuk'),
+                Forms\Components\DatePicker::make('entry_date')->label('Tanggal masuk'),
                 Forms\Components\FileUpload::make('profile_picture_url')
                     ->image()
                     ->directory('student-profiles')
-                    ->label('foto profil'),
+                    ->label('Foto profil'),
                 Forms\Components\TextInput::make('guardian_number')
                     ->tel()
                     ->maxLength(255)
@@ -47,18 +50,19 @@ class StudentsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('student_name')
                     ->searchable()
                     ->sortable()
-                    ->label('Student Name'),
+                    ->label('Nama Murid'),
                 Tables\Columns\ImageColumn::make('profile_picture_url')
-                    ->label('Profile Picture')
+                    ->label('Foto Profile')
                     ->circular(),
                 Tables\Columns\TextColumn::make('guardian')
                     ->searchable()
-                    ->label('Guardian'),
+                    ->label('Orang Tua / Wali Murid'),
                 Tables\Columns\TextColumn::make('guardian_number')
-                    ->label('Guardian Number'),
+                    ->label('Nomor Orang Tua / Wali Murid'),
                 Tables\Columns\TextColumn::make('entry_date')
                     ->date()
-                    ->sortable(),
+                    ->sortable()
+                    ->label('Tanggal Masuk'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -72,13 +76,18 @@ class StudentsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
-                Tables\Actions\AttachAction::make(),
+                Tables\Actions\CreateAction::make()
+                    ->label('Murid Baru'),
+                Tables\Actions\AttachAction::make()
+                    ->label('Masukkan Murid'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DetachAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->label('Perbaharui'),
+                Tables\Actions\DetachAction::make()
+                    ->label('Keluarkan Murid'),
+                Tables\Actions\DeleteAction::make()
+                    ->label('Hapus'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

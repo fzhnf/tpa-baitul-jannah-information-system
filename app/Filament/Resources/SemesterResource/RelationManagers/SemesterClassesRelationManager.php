@@ -13,9 +13,9 @@ class SemesterClassesRelationManager extends RelationManager
 {
     protected static string $relationship = 'semesterClasses';
 
-    protected static ?string $title = 'Classes';
+    protected static ?string $title = 'Kelas';
 
-    protected static ?string $label = 'Class';
+    protected static ?string $label = 'Kelas';
 
     public function form(Form $form): Form
     {
@@ -28,11 +28,12 @@ class SemesterClassesRelationManager extends RelationManager
                     })
                     ->getOptionLabelFromRecordUsing(fn($record) => "{$record->school_year} - Semester {$record->semester_enum}")
                     ->required()
+                    ->label('Semester')
                     ->searchable(),
                 Forms\Components\TextInput::make('nama_semester_class')
                     ->required()
                     ->maxLength(255)
-                    ->label('Class Name'),
+                    ->label('Nama Kelas'),
             ]);
     }
 
@@ -42,14 +43,16 @@ class SemesterClassesRelationManager extends RelationManager
             ->recordTitleAttribute('nama_semester_class')
             ->columns([
                 Tables\Columns\TextColumn::make('nama_semester_class')
-                    ->label('Class Name')
+                    ->label('Nama Kelas')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('semester.school_year')
                     ->sortable()
+                    ->label('Tahun Ajaran')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('semester.semester_enum')
                     ->formatStateUsing(fn(string $state): string => "Semester $state")
-                    ->sortable(),
+                    ->sortable()
+                    ->label('Semester'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -63,11 +66,14 @@ class SemesterClassesRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()
+                    ->label('Kelas Baru'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->label('Perbaharui'),
+                Tables\Actions\DeleteAction::make()
+                    ->label('Hapus'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

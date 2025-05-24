@@ -40,7 +40,8 @@ class AttendanceResource extends Resource
                 Forms\Components\Select::make('student_id')
                     ->relationship('student', 'student_name')
                     ->required()
-                    ->searchable(),
+                    ->searchable()
+                    ->label('Murid'),
                 Forms\Components\Select::make('status')
                     ->options([
                         'hadir' => 'Hadir',
@@ -51,7 +52,8 @@ class AttendanceResource extends Resource
                     ->required()
                     ->label('Status'),
                 Forms\Components\TextInput::make('remarks')
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->label('Keterangan'),
             ]);
     }
 

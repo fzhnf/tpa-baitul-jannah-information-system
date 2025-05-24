@@ -15,6 +15,8 @@ class ClassSessionsRelationManager extends RelationManager
 {
     protected static string $relationship = 'classSessions';
 
+    protected static ?string $title = 'Sesi Kelas';
+
     public function form(Form $form): Form
     {
         return $form
@@ -22,13 +24,15 @@ class ClassSessionsRelationManager extends RelationManager
                 Forms\Components\Select::make('semester_class_id')
                     ->relationship('semesterClass', 'nama_semester_class')
                     ->required()
-                    ->label('Class')
+                    ->label('Kelas')
                     ->searchable(),
                 Forms\Components\DateTimePicker::make('date')
-                    ->required(),
+                    ->required()
+                    ->label('Tanggal'),
                 Forms\Components\Textarea::make('description')
                     ->maxLength(65535)
-                    ->columnSpanFull(),
+                    ->columnSpanFull()
+                    ->label('Deskripsi'),
             ]);
     }
 
@@ -40,14 +44,15 @@ class ClassSessionsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('semesterClass.nama_semester_class')
                     ->sortable()
                     ->searchable()
-                    ->label('Class'),
+                    ->label('Kelas'),
                 Tables\Columns\TextColumn::make('semesterClass.semester.school_year')
                     ->sortable()
                     ->searchable()
-                    ->label('School Year'),
+                    ->label('Tahun Ajaran'),
                 Tables\Columns\TextColumn::make('date')
                     ->dateTime()
-                    ->sortable(),
+                    ->sortable()
+                    ->label('Tanggal'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -61,11 +66,14 @@ class ClassSessionsRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()
+                    ->label('Sesi Baru'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->label('Perbaharui'),
+                Tables\Actions\DeleteAction::make()
+                    ->label('Hapus'),
                 Tables\Actions\Action::make('manage')
                     ->label('Mengelola')
                     ->icon('heroicon-o-cog')
