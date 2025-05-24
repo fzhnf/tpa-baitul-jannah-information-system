@@ -15,7 +15,6 @@ class AchievementsTableSeeder extends Seeder
 {
     public function run(): void
     {
-        ini_set('memory_limit', '512M');
 
         // Import achievements from CSV
         $csvFile = fopen(base_path('database/data/The Quran Dataset_trimmed.csv'), 'r');
@@ -25,13 +24,12 @@ class AchievementsTableSeeder extends Seeder
         $achievementData = [];
         $count = 0;
 
-        \DB::beginTransaction();
-        try {
             // Process achievements CSV
             while (($data = fgetcsv($csvFile)) !== false) {
                 $achievementData[] = [
-                    'achievement_name' => "Q.S. {$data[1]}/{$data[0]}: {$data[2]} (Juz {$data[3]})",
+                    'achievement_name' => "Q.S. {$data[1]}/{$data[0]}: {$data[2]}",
                     'category' => 'tahfidz',
+                    'module' => "Juz {$data[3]}",
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
@@ -126,11 +124,5 @@ class AchievementsTableSeeder extends Seeder
                 ];
             }
             StudentAchievement::insert($studentAchievementData);
-
-            \DB::commit();
-        } catch (\Exception $e) {
-            \DB::rollBack();
-            throw $e;
-        }
     }
 }

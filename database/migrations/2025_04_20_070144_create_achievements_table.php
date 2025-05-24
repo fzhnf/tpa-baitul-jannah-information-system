@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('achievement_name');
             $table->enum('category', ['ummi', 'tahfidz', 'doaHadist']);
+            $table->string('module');
             $table->timestamps();
         });
     }
