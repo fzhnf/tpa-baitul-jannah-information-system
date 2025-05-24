@@ -5,9 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * 
+ *
  *
  * @property string $id
  * @property string|null $parent_id
@@ -37,7 +39,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class BannerCategory extends Model
 {
-    use HasFactory, HasUlids;
+    use HasFactory;
+    use HasUlids;
 
     /**
      * @var string
@@ -58,18 +61,24 @@ class BannerCategory extends Model
     protected $casts = [
         'is_active' => 'boolean',
     ];
-
-    public function parent()
+    /**
+     * @return BelongsTo<BannerCategory,BannerCategory>
+     */
+    public function parent(): BelongsTo
     {
         return $this->belongsTo(BannerCategory::class, 'parent_id');
     }
-
-    public function children()
+    /**
+     * @return HasMany<BannerCategory,BannerCategory>
+     */
+    public function children(): HasMany
     {
         return $this->hasMany(BannerCategory::class, 'parent_id');
     }
-
-    public function banners()
+    /**
+     * @return HasMany<Banner,BannerCategory>
+     */
+    public function banners(): HasMany
     {
         return $this->hasMany(Banner::class, 'banner_category_id');
     }
