@@ -32,6 +32,7 @@ class Achievement extends Model
 
     protected $fillable = [
         'achievement_name',
+        'module',
         'category',
     ];
 
