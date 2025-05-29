@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\StudentResource\RelationManagers;
 
+use App\Models\SemesterClass;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -25,7 +26,7 @@ class SemesterClassesRelationManager extends RelationManager
                         return $query->orderBy('school_year', 'desc')
                             ->orderBy('semester_enum', 'desc');
                     })
-                    ->getOptionLabelFromRecordUsing(fn($record) => "{$record->school_year} - Semester {$record->semester_enum}")
+                    ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->school_year} - Semester {$record->semester_enum}")
                     ->required()
                     ->searchable(),
                 Forms\Components\TextInput::make('nama_semester_class')
@@ -48,7 +49,7 @@ class SemesterClassesRelationManager extends RelationManager
                     ->label('Tahun Ajaran')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('semester.semester_enum')
-                    ->formatStateUsing(fn(string $state): string => "Semester $state")
+                    ->formatStateUsing(fn (string $state): string => "Semester $state")
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -75,6 +76,16 @@ class SemesterClassesRelationManager extends RelationManager
                     ->label('Keluarkan'),
                 Tables\Actions\DeleteAction::make()
                     ->label('Hapus'),
+                Tables\Actions\Action::make('view_progress')
+                    ->label('Lihat Progress')
+                    ->icon('heroicon-o-chart-bar-square')
+                    ->color('success')
+                    ->url(function (SemesterClass $record) {
+                        return route('filament.admin.resources.semester-classes.student-progression', [
+                            'semesterClass' => $record->id,
+                            'student' => $this->ownerRecord->id,
+                        ]);
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

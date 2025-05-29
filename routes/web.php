@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Filament\Resources\SemesterClassResource\Pages\StudentProgression;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get(
+    '/students/{student}/classes/{semesterClass}/progression',
+    [StudentProgression::class, 'mountFromStudent']
+)
+    ->name('filament.admin.resources.students.progression');
