@@ -143,7 +143,7 @@ class BannerResource extends Resource
                     ->collection('images')
                     ->wrap(),
                 Tables\Columns\TextColumn::make('title')
-                    ->description(fn(Model $record): string => strip_tags((new CommonMarkConverter())->convert($record->description)->getContent()))
+                    ->description(fn (Model $record): string => strip_tags((new CommonMarkConverter())->convert($record->description)->getContent()))
                     ->lineClamp(2)
                     ->wrap()
                     ->searchable()
@@ -187,7 +187,7 @@ class BannerResource extends Resource
                     ])
                     ->query(function (Builder $query, array $data) {
                         return $query
-                            ->when($data['start_date'] ?? null, fn($query, $date) => $query->whereDate('start_date', '>=', $date));
+                            ->when($data['start_date'] ?? null, fn ($query, $date) => $query->whereDate('start_date', '>=', $date));
                     }),
                 Tables\Filters\Filter::make('end_date')
                     ->form([
@@ -195,7 +195,7 @@ class BannerResource extends Resource
                     ])
                     ->query(function (Builder $query, array $data) {
                         return $query
-                            ->when($data['end_date'] ?? null, fn($query, $date) => $query->whereDate('end_date', '<=', $date));
+                            ->when($data['end_date'] ?? null, fn ($query, $date) => $query->whereDate('end_date', '<=', $date));
                     }),
             ])
             ->actions([
@@ -253,7 +253,7 @@ class BannerResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __("menu.nav_group.banner");
+        return __("Spanduk");
     }
 
     public static function getNavigationBadge(): ?string

@@ -127,6 +127,6 @@ class CategoryResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __("menu.nav_group.blog");
+        return __("Blog");
     }
 }

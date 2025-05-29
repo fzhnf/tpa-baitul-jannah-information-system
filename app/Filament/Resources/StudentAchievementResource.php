@@ -25,6 +25,9 @@ class StudentAchievementResource extends Resource
 
     protected static ?string $navigationGroup = 'Manajemen Akademik';
 
+    protected static ?int $navigationSort = 5; // Smaller number = higher up
+
+
     protected static ?string $label = 'Student Achievement';
 
     public static function form(Form $form): Form
@@ -40,9 +43,9 @@ class StudentAchievementResource extends Resource
 
         // Define your category options here, similar to AchievementResource
         $achievementCategories = [
-            'ummi' => 'Ummi',
-            'tahfidz' => 'Tahfidz',
-            'doaHadist' => 'Doa Hadist',
+            'Ummi' => 'Ummi',
+            'Tahfidz' => 'Tahfidz',
+            'Doa & Hadist' => 'Doa & Hadist',
             // Add other categories if you have more
         ];
 
@@ -71,30 +74,75 @@ class StudentAchievementResource extends Resource
                 ->required()
                 ->label('Tanggal'),
 
-            // New Category Select Field using defined options
-            Forms\Components\Select::make('achievement_category_filter') // Changed name to avoid conflict if you have 'category' in StudentAchievement
-                ->label('Kategori Pencapaian')
-                ->options($achievementCategories) // Use the predefined array
-                ->live() // Make this field reactive
-                ->searchable()
-                ->required(),
+        // Category Select
+        Forms\Components\Select::make('achievement_category_filter')
+            ->label('Kategori Pencapaian')
+            ->options([
+                'Ummi' => 'Ummi',
+                'Tahfidz' => 'Tahfidz',
+                'Doa & Hadist' => 'Doa & Hadist',
+            ])
+            ->live()
+            ->required()
+            ->afterStateUpdated(function (callable $set) {
+                $set('achievement_module_filter', null);
+                $set('achievement_id', null);
+            }),
 
-            Forms\Components\Select::make('achievement_id')
-                ->label('Pencapaian')
-                ->options(function (Get $get): Collection {
-                    $category = $get('achievement_category_filter'); // Use the correct field name
-                    if (!$category) {
-                        return collect();
-                    }
-                    return Achievement::query()
-                        ->where('category', $category) // This assumes 'category' column in 'achievements' table stores 'ummi', 'tahfidz', etc.
-                        ->pluck('achievement_name', 'id');
-                })
-                ->required()
-                ->searchable()
-                // ->live() // Only if other fields depend on this
-                ->disabled(fn (Get $get): bool => !$get('achievement_category_filter'))
-                ->placeholder(fn (Get $get): string => $get('achievement_category_filter') ? 'Pilih pencapaian' : 'Pilih kategori terlebih dahulu'),
+        // Module Select
+        Forms\Components\Select::make('achievement_module_filter')
+            ->label(fn (Get $get): string => match ($get('achievement_category_filter')) {
+                'Ummi' => 'Jilid Ke-',
+                'Tahfidz' => 'Juz Ke-',
+                'Doa & Hadist' => 'Modul Ke-',
+                default => 'Modul/Bagian',
+            })
+            ->options(function (Get $get): array {
+                $category = $get('achievement_category_filter');
+                return $category
+                    ? Achievement::where('category', $category)
+                        ->distinct('module')
+                        ->pluck('module', 'module')
+                        ->toArray()
+                    : [];
+            })
+            ->live()
+            ->required()
+            ->visible(fn (Get $get): bool => filled($get('achievement_category_filter')))
+            ->afterStateUpdated(fn (callable $set) => $set('achievement_id', null)),
+
+        // Achievement Select
+        Forms\Components\Select::make('achievement_id')
+            ->label('Pencapaian Spesifik')
+            ->options(function (Get $get): array {
+                $category = $get('achievement_category_filter');
+                $module = $get('achievement_module_filter');
+
+                if (!$category || !$module) {
+                    return [];
+                }
+
+                return Achievement::where('category', $category)
+                    ->where('module', $module)
+                    ->pluck('achievement_name', 'id')
+                    ->toArray();
+            })
+            ->required()
+            ->searchable()
+            ->visible(
+                fn (Get $get): bool =>
+                filled($get('achievement_category_filter')) &&
+                filled($get('achievement_module_filter'))
+            )
+            ->placeholder(function (Get $get): string {
+                if (!$get('achievement_category_filter')) {
+                    return 'Pilih kategori terlebih dahulu';
+                }
+                if (!$get('achievement_module_filter')) {
+                    return 'Pilih modul terlebih dahulu';
+                }
+                return 'Pilih pencapaian';
+            }),
 
 
             Forms\Components\TextInput::make('keterangan')
@@ -105,28 +153,35 @@ class StudentAchievementResource extends Resource
                 ->columnSpanFull()
                 ->maxLength(65535)
                 ->label('Catatan'),
+ Forms\Components\Section::make('Evaluasi')->schema([
+    Forms\Components\Select::make('makruj')
+        ->options($gradeOptions)
+        ->default('-')
+        ->visible(fn (Get $get): bool =>
+            in_array($get('achievement_category_filter'), ['Ummi', 'Tahfidz'])),
 
-            Forms\Components\Section::make('Evaluasi')->schema([
-                Forms\Components\Select::make('makruj')
-                    ->options($gradeOptions)
-                    ->default('-'),
+    Forms\Components\Select::make('mad')
+        ->options($gradeOptions)
+        ->default('-')
+        ->visible(fn (Get $get): bool =>
+            in_array($get('achievement_category_filter'), ['Ummi', 'Tahfidz'])),
 
-                Forms\Components\Select::make('mad')
-                    ->options($gradeOptions)
-                    ->default('-'),
+    Forms\Components\Select::make('tajwid')
+        ->options($gradeOptions)
+        ->default('-')
+        ->visible(fn (Get $get): bool =>
+            in_array($get('achievement_category_filter'), ['Ummi', 'Tahfidz'])),
 
-                Forms\Components\Select::make('tajwid')
-                    ->options($gradeOptions)
-                    ->default('-'),
+    Forms\Components\Select::make('kelancaran')
+        ->options($gradeOptions)
+        ->default('-'),
 
-                Forms\Components\Select::make('kelancaran')
-                    ->options($gradeOptions)
-                    ->default('-'),
-
-                Forms\Components\Select::make('fashohah')
-                    ->options($gradeOptions)
-                    ->default('-'),
-            ])->columns(5),
+    Forms\Components\Select::make('fashohah')
+        ->options($gradeOptions)
+        ->default('-')
+        ->visible(fn (Get $get): bool =>
+            $get('achievement_category_filter') === 'Doa & Hadist'),
+])->columns(5),
         ]);
     }
 
@@ -141,7 +196,7 @@ class StudentAchievementResource extends Resource
 
                 Tables\Columns\TextColumn::make('classSession.date')
                     ->label('Sesi Kelas')
-                    ->date('d M Y H:i') // Format the date
+                    ->date('d M Y H:i')
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('achievement.achievement_name')
@@ -152,19 +207,18 @@ class StudentAchievementResource extends Resource
                 Tables\Columns\TextColumn::make('achievement.category')
                     ->label('Kategori')
                     ->badge()
-                     ->formatStateUsing(function (string $state): string {
-                        // Assuming your AchievementResource uses these keys for display
+                    ->formatStateUsing(function (string $state): string {
                         $categoryDisplay = [
-                            'ummi' => 'Ummi',
-                            'tahfidz' => 'Tahfidz',
-                            'doaHadist' => 'Doa Hadist',
+                            'Ummi' => 'Ummi',
+                            'Tahfidz' => 'Tahfidz',
+                            'Doa & Hadist' => 'Doa Hadist',
                         ];
                         return $categoryDisplay[$state] ?? ucfirst($state);
                     })
                     ->color(fn (string $state): string => match ($state) {
-                        'ummi' => 'primary',
-                        'tahfidz' => 'success',
-                        'doaHadist' => 'warning',
+                        'Ummi' => 'primary',
+                        'Tahfidz' => 'success',
+                        'Doa & Hadist' => 'warning',
                         default => 'gray',
                     })
                     ->searchable()
@@ -178,23 +232,58 @@ class StudentAchievementResource extends Resource
                 Tables\Columns\TextColumn::make('keterangan')
                     ->label('Keterangan')
                     ->searchable()
-                    ->limit(30) // Optionally limit length in table
-                    ->tooltip(fn ($record) => $record->keterangan), // Show full text on hover
+                    ->sortable()
+                    ->limit(30)
+                    ->tooltip(fn ($record) => $record->keterangan),
 
-                Tables\Columns\TextColumn::make('makruj')->sortable(),
-                Tables\Columns\TextColumn::make('mad')->sortable(),
-                Tables\Columns\TextColumn::make('tajwid')->sortable(),
-                Tables\Columns\TextColumn::make('kelancaran')->sortable(),
-                Tables\Columns\TextColumn::make('fashohah')->sortable(),
-
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->toggleable(isToggledHiddenByDefault: true),
-
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                // Grade columns with sorting
+                Tables\Columns\TextColumn::make('makruj')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('mad')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('tajwid')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('kelancaran')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('fashohah')
+                    ->sortable()
+                    ->searchable(),
             ])
+        ->filters([
+            // Ummi Filter
+            Tables\Filters\Filter::make('Ummi')
+                ->label('Ummi')
+                ->query(fn (Builder $query): Builder => $query->whereHas(
+                    'achievement',
+                    fn ($q) => $q->where('category', 'Ummi')
+                ))
+                ->indicator('Ummi')
+                ->toggle(),
+
+            // Tahfidz Filter
+            Tables\Filters\Filter::make('Tahfidz')
+                ->label('Tahfidz')
+                ->query(fn (Builder $query): Builder => $query->whereHas(
+                    'achievement',
+                    fn ($q) => $q->where('category', 'Tahfidz')
+                ))
+                ->indicator('Tahfidz')
+                ->toggle(),
+
+            // Doa & Hadist Filter
+            Tables\Filters\Filter::make('Doa & Hadist')
+                ->label('Doa & Hadist')
+                ->query(fn (Builder $query): Builder => $query->whereHas(
+                    'achievement',
+                    fn ($q) => $q->where('category', 'Doa & Hadist')
+                ))
+                ->indicator('Doa & Hadist')
+                ->toggle()
+        ])
             ->actions([
                 Tables\Actions\EditAction::make()
                     ->label('Perbaharui'),

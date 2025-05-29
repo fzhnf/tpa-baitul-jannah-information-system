@@ -7,6 +7,7 @@ use App\Filament\Resources\AttendanceResource\RelationManagers;
 use App\Models\Attendance;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -24,6 +25,9 @@ class AttendanceResource extends Resource
 
     protected static ?string $navigationGroup = 'Manajemen Akademik';
 
+    protected static ?int $navigationSort = 4; // Smaller number = higher up
+
+
     public static function form(Form $form): Form
     {
         return $form
@@ -32,7 +36,7 @@ class AttendanceResource extends Resource
                     ->relationship('classSession', 'date', function (Builder $query) {
                         return $query->orderBy('date', 'desc');
                     })
-                    ->getOptionLabelFromRecordUsing(fn($record) => $record->semesterClass->nama_semester_class . ' - ' . $record->date->format('d M Y H:i'))
+                    ->getOptionLabelFromRecordUsing(fn ($record) => $record->semesterClass->nama_semester_class . ' - ' . $record->date->format('d M Y H:i'))
                     ->placeholder('e.g: 2025-05-03 15:00')
                     ->required()
                     ->searchable()
@@ -50,10 +54,15 @@ class AttendanceResource extends Resource
                         'absen' => 'Absen',
                     ])
                     ->required()
+                    ->live() // Add live update
                     ->label('Status'),
+
                 Forms\Components\TextInput::make('remarks')
                     ->maxLength(255)
-                    ->label('Keterangan'),
+                    ->label('Keterangan')
+                    ->hidden(fn (Get $get): bool => $get('status') === 'hadir')
+                    ->required(fn (Get $get): bool => in_array($get('status'), ['sakit', 'ijin', 'absen']))
+                    ->helperText('Wajib diisi untuk status Sakit, Ijin, atau Absen'),
             ]);
     }
 
@@ -75,7 +84,7 @@ class AttendanceResource extends Resource
                     ->label('Nama Murid'),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'hadir' => 'success',
                         'sakit' => 'info',
                         'ijin' => 'warning',
@@ -83,8 +92,14 @@ class AttendanceResource extends Resource
                     })
                     ->label('Status'),
                 Tables\Columns\TextColumn::make('remarks')
+                    ->label('Keterangan')
+                    ->formatStateUsing(function ($state, $record) {
+                        return in_array($record->status, ['sakit', 'ijin', 'absen'])
+                            ? $state
+                            : '-';
+                    })
                     ->searchable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(isToggledHiddenByDefault: false), // Make visible by default
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

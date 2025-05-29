@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\SemesterClassResource\Pages;
+use App\Filament\Resources\SemesterClassResource\Pages\StudentProgression;
 use App\Filament\Resources\SemesterClassResource\RelationManagers;
 use App\Models\SemesterClass;
 use Filament\Forms;
@@ -23,6 +24,9 @@ class SemesterClassResource extends Resource
 
     protected static ?string $navigationGroup = 'Manajemen Akademik';
 
+    protected static ?int $navigationSort = 2; // Smaller number = higher up
+
+
     public static function form(Form $form): Form
     {
         return $form
@@ -32,7 +36,7 @@ class SemesterClassResource extends Resource
                         return $query->orderBy('school_year', 'desc')
                             ->orderBy('semester_enum', 'desc');
                     })
-                    ->getOptionLabelFromRecordUsing(fn($record) => "{$record->school_year} - Semester {$record->semester_enum}")
+                    ->getOptionLabelFromRecordUsing(fn ($record) => "{$record->school_year} - Semester {$record->semester_enum}")
                     ->required()
                     ->searchable(),
                 Forms\Components\TextInput::make('nama_semester_class')
@@ -54,7 +58,7 @@ class SemesterClassResource extends Resource
                     ->searchable()
                     ->label('Tahun Ajaran'),
                 Tables\Columns\TextColumn::make('semester.semester_enum')
-                    ->formatStateUsing(fn(string $state): string => "Semester $state")
+                    ->formatStateUsing(fn (string $state): string => "Semester $state")
                     ->sortable()
                     ->label('Semester'),
                 Tables\Columns\TextColumn::make('created_at')
@@ -96,8 +100,8 @@ class SemesterClassResource extends Resource
         return [
             'index' => Pages\ListSemesterClasses::route('/'),
             'create' => Pages\CreateSemesterClass::route('/create'),
-            'view' => Pages\ViewSemesterClass::route('/{record}'),
             'edit' => Pages\EditSemesterClass::route('/{record}/edit'),
+            'student-progression' => StudentProgression::route('/{semesterClass}/students/{student}/progression'),
         ];
     }
 }

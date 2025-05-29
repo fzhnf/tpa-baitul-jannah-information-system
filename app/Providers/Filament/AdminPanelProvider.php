@@ -5,7 +5,6 @@ namespace App\Providers\Filament;
 use App\Filament\Pages\Auth\EmailVerification;
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Auth\RequestPasswordReset;
-use App\Filament\Resources\MenuResource;
 use App\Http\Middleware\FilamentRobotsMiddleware;
 use App\Livewire\MyProfileExtended;
 use App\Settings\GeneralSettings;
@@ -49,19 +48,19 @@ class AdminPanelProvider extends PanelProvider
             ->sidebarCollapsibleOnDesktop()
             ->navigationGroups([
                 Navigation\NavigationGroup::make()
-                    ->label(__('menu.nav_group.content'))
+                    ->label(__('Konten'))
                     ->collapsible(false),
                 Navigation\NavigationGroup::make()
-                    ->label(__('menu.nav_group.access'))
+                    ->label(__('Akses'))
                     ->collapsible(false),
                 Navigation\NavigationGroup::make()
-                    ->label(__('menu.nav_group.sites'))
+                    ->label(__('Situs'))
                     ->collapsed(),
                 Navigation\NavigationGroup::make()
-                    ->label(__('menu.nav_group.settings'))
+                    ->label(__('Pengaturan'))
                     ->collapsed(),
                 Navigation\NavigationGroup::make()
-                    ->label(__('menu.nav_group.activities'))
+                    ->label(__('Aktivitas'))
                     ->collapsed(),
             ])
             ->viteTheme('resources/css/filament/admin/theme.css')
@@ -90,9 +89,8 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->plugins([
-                \TomatoPHP\FilamentMediaManager\FilamentMediaManagerPlugin::make()
+\TomatoPHP\FilamentMediaManager\FilamentMediaManagerPlugin::make()
                     ->allowSubFolders(),
-                /* \BezhanSalleh\FilamentExceptions\FilamentExceptionsPlugin::make(), */
                 \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make()
                     ->gridColumns([
                         'default' => 2,
@@ -118,19 +116,6 @@ class AdminPanelProvider extends PanelProvider
                     )
                     ->myProfileComponents([
                         'personal_info' => MyProfileExtended::class,
-                    ]),
-                \Datlechin\FilamentMenuBuilder\FilamentMenuBuilderPlugin::make()
-                    ->usingResource(MenuResource::class)
-                    ->addMenuPanels([
-                        \Datlechin\FilamentMenuBuilder\MenuPanel\StaticMenuPanel::make()
-                            ->addMany([
-                                'Home' => url('/'),
-                                'Blog' => url('/blog'),
-                            ])
-                            ->description('Default menus')
-                            ->collapsed(true)
-                            ->collapsible(true)
-                            ->paginate(perPage: 5, condition: true),
                     ]),
             ]);
     }

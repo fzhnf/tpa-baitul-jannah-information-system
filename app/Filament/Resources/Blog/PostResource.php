@@ -48,7 +48,7 @@ class PostResource extends Resource
                             ->required()
                             ->live(onBlur: true)
                             ->maxLength(255)
-                            ->afterStateUpdated(fn(string $operation, $state, Forms\Set $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
+                            ->afterStateUpdated(fn (string $operation, $state, Forms\Set $set) => $operation === 'create' ? $set('slug', Str::slug($state)) : null),
 
                         Forms\Components\TextInput::make('slug')
                             ->disabled()
@@ -67,9 +67,9 @@ class PostResource extends Resource
                         Forms\Components\Select::make('blog_author_id')
                             ->relationship(
                                 name: 'author',
-                                modifyQueryUsing: fn(Builder $query) => $query->with('roles')->whereRelation('roles', 'name', '=', 'admin'),
+                                modifyQueryUsing: fn (Builder $query) => $query->with('roles')->whereRelation('roles', 'name', '=', 'admin'),
                             )
-                            ->getOptionLabelFromRecordUsing(fn(Model $record) => "{$record->firstname} {$record->lastname}")
+                            ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->firstname} {$record->lastname}")
                             ->searchable(['firstname', 'lastname'])
                             ->required(),
 
@@ -111,7 +111,7 @@ class PostResource extends Resource
 
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
-                    ->getStateUsing(fn(Post $record): string => $record->published_at?->isPast() ? 'Published' : 'Draft')
+                    ->getStateUsing(fn (Post $record): string => $record->published_at?->isPast() ? 'Published' : 'Draft')
                     ->colors([
                         'success' => 'Published',
                     ]),
@@ -162,7 +162,7 @@ class PostResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __("menu.nav_group.blog");
+        return __("Blog");
     }
 
     public static function getNavigationBadge(): ?string

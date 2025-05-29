@@ -22,6 +22,9 @@ class SemesterResource extends Resource
 
     protected static ?string $navigationGroup = 'Manajemen Akademik';
 
+    protected static ?int $navigationSort = 6; // Smaller number = higher up
+
+
     public static function form(Form $form): Form
     {
         return $form

@@ -14,13 +14,15 @@ use Filament\Tables\Table;
 class StudentResource extends Resource
 {
     protected static ?string $model = Student::class;
-    
+
     protected static ?string $modelLabel = "Murid";
     protected static ?string $pluralLabel = "Murid";
 
     protected static ?string $navigationIcon = 'heroicon-o-user';
 
     protected static ?string $navigationGroup = 'Manajemen Akademik';
+
+    protected static ?int $navigationSort = 3; // Smaller number = higher up
 
     public static function form(Form $form): Form
     {

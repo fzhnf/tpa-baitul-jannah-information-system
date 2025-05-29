@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\SemesterClassResource\RelationManagers;
 
+use App\Models\Student;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -13,7 +14,6 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class StudentsRelationManager extends RelationManager
 {
     protected static string $relationship = 'students';
-
     protected static ?string $title = 'Murid';
 
     public function form(Form $form): Form
@@ -82,6 +82,14 @@ class StudentsRelationManager extends RelationManager
                     ->label('Masukkan Murid'),
             ])
             ->actions([
+                Tables\Actions\Action::make('view_progression')
+                    ->label('Lihat Progres')
+                    ->icon('heroicon-o-chart-bar')
+                    ->color('success')
+                    ->url(fn (Student $record): string => route('filament.admin.resources.semester-classes.student-progression', [
+                        'semesterClass' => $this->getOwnerRecord()->id,
+                        'student' => $record->id,
+                    ])),
                 Tables\Actions\EditAction::make()
                     ->label('Perbaharui'),
                 Tables\Actions\DetachAction::make()

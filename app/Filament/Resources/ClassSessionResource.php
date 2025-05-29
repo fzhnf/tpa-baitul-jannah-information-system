@@ -22,6 +22,8 @@ class ClassSessionResource extends Resource
 
     protected static ?string $navigationGroup = 'Manajemen Akademik';
 
+    protected static ?int $navigationSort = 1; // Smaller number = higher up
+
     public static function form(Form $form): Form
     {
         return $form
@@ -49,7 +51,7 @@ class ClassSessionResource extends Resource
                     ->sortable()
                     ->searchable()
                     ->label('Kelas')
-                    ->tooltip(fn($record) => $record->semesterClass->nama_semester_class)
+                    ->tooltip(fn ($record) => $record->semesterClass->nama_semester_class)
                     ->extraAttributes([
                         'class' => 'max-w-[200px] whitespace-nowrap overflow-hidden relative pr-4',
                         'style' => 'mask-image: linear-gradient(to right, black 80%, transparent); -webkit-mask-image: linear-gradient(to right, black 80%, transparent);',
@@ -80,7 +82,7 @@ class ClassSessionResource extends Resource
                 Tables\Actions\Action::make('manage')
                     ->label('Mengelola')
                     ->icon('heroicon-o-cog')
-                    ->url(fn(ClassSession $record): string => static::getUrl('manage', ['record' => $record]))
+                    ->url(fn (ClassSession $record): string => static::getUrl('manage', ['record' => $record]))
                     ->color('success'),
 
             ])

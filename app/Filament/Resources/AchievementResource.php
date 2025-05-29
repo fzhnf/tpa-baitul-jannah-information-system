@@ -27,6 +27,8 @@ class AchievementResource extends Resource
 
     protected static ?string $navigationGroup = 'Manajemen Akademik';
 
+    protected static ?int $navigationSort = 7; // Smaller number = higher up
+
     public static function form(Form $form): Form
     {
         return $form
@@ -37,9 +39,9 @@ class AchievementResource extends Resource
                     ->label('Pencapaian'),
                 Forms\Components\Select::make('category')
                     ->options([
-                        'ummi' => 'Ummi',
-                        'tahfidz' => 'Tahfidz',
-                        'doaHadist' => 'Doa Hadist',
+                        'Ummi' => 'Ummi',
+                        'Tahfidz' => 'Tahfidz',
+                        'Doa & Hadist' => 'Doa & Hadist',
                     ])
                     ->required()
                     ->live() // Make category reactive for module field
@@ -49,16 +51,16 @@ class AchievementResource extends Resource
                     ->maxLength(255)
                     // Dynamic label based on category
                     ->label(fn (Get $get): string => match ($get('category')) {
-                        'ummi' => 'Jilid Ke-',
-                        'tahfidz' => 'Juz Ke-',
-                        'doaHadist' => 'Modul Ke-',
+                        'Ummi' => 'Jilid Ke-',
+                        'Tahfidz' => 'Juz Ke-',
+                        'Doa & Hadist' => 'Modul Ke-',
                         default => 'Modul/Bagian',
                     })
                     // Dynamic placeholder
                     ->placeholder(fn (Get $get): string => match ($get('category')) {
-                        'ummi' => 'Contoh: 1, 2, ..., 6, Ghorib, Tajwid',
-                        'tahfidz' => 'Contoh: 1, 2, ..., 30, Amma',
-                        'doaHadist' => 'Contoh: 1, Pilihan, Harian',
+                        'Ummi' => 'Contoh: 1, 2, ..., 6, Ghorib, Tajwid',
+                        'Tahfidz' => 'Contoh: 1, 2, ..., 30, Amma',
+                        'Doa & Hadist' => 'Contoh: 1, Pilihan, Harian',
                         default => 'Masukkan detail modul/bagian',
                     })
                     // Show this field only after a category is selected
@@ -69,9 +71,9 @@ class AchievementResource extends Resource
     public static function table(Table $table): Table
     {
         $categoryOptions = [
-            'ummi' => 'Ummi',
-            'tahfidz' => 'Tahfidz',
-            'doaHadist' => 'Doa Hadist',
+                        'Ummi' => 'Ummi',
+                        'Tahfidz' => 'Tahfidz',
+                        'Doa & Hadist' => 'Doa & Hadist',
         ];
 
         return $table
@@ -84,9 +86,9 @@ class AchievementResource extends Resource
                     ->badge()
                     ->formatStateUsing(fn (string $state): string => $categoryOptions[$state] ?? ucfirst($state))
                     ->color(fn (string $state): string => match ($state) {
-                        'ummi' => 'primary',
-                        'tahfidz' => 'success',
-                        'doaHadist' => 'warning',
+                        'Ummi' => 'primary',
+                        'Tahfidz' => 'success',
+                        'Doa & Hadist' => 'warning',
                         default => 'gray',
                     })
                     ->sortable()

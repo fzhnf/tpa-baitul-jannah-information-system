@@ -20,8 +20,10 @@
 	"license": "MIT",
 	"require": {
 		"php": "^8.2",
+		"barryvdh/laravel-dompdf": "^3.1",
 		"bezhansalleh/filament-shield": "^3.2",
 		"codeat3/blade-fluentui-system-icons": "^1.34",
+		"datlechin/filament-menu-builder": "^0.5.2",
 		"filament/filament": "^3.2",
 		"filament/spatie-laravel-media-library-plugin": "^3.2",
 		"filament/spatie-laravel-settings-plugin": "^3.2",
@@ -35,7 +37,6 @@
 		"league/commonmark": "^2.4",
 		"opcodesio/log-viewer": "^3.11",
 		"riodwanto/filament-ace-editor": "^1.0",
-		"datlechin/filament-menu-builder": "^0.5.2",
 		"stichoza/google-translate-php": "^5.2",
 		"tomatophp/filament-media-manager": "^1.1"
 	},

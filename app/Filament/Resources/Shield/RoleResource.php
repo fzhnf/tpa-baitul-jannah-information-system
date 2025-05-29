@@ -162,7 +162,7 @@ class RoleResource extends Resource implements HasShieldPermissions
     public static function getNavigationGroup(): ?string
     {
         return Utils::isResourceNavigationGroupEnabled()
-            ? __("menu.nav_group.access")
+            ? __("Akses")
             : '';
     }
 

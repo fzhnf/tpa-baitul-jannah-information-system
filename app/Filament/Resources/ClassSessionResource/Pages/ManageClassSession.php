@@ -63,7 +63,8 @@ class ManageClassSession extends Page implements HasTable
         $classSessionId = $this->record->id;
 
         return $table
-            ->query(fn () => $this->record
+            ->query(
+                fn () => $this->record
                 ->semesterClass
                 ->students()
                 ->getQuery()
@@ -181,9 +182,9 @@ class ManageClassSession extends Page implements HasTable
         ->color('success')
         ->form(function () use ($gradeOptions) { // Pass $gradeOptions if defined outside
             $categoryOptions = [
-                'ummi' => 'Ummi',
-                'tahfidz' => 'Tahfidz',
-                'doaHadist' => 'Doa Hadist',
+                'Ummi' => 'Ummi',
+                'Tahfidz' => 'Tahfidz',
+                'Doa & Hadist' => 'Doa Hadist',
             ];
 
             return [
@@ -201,9 +202,9 @@ class ManageClassSession extends Page implements HasTable
 
                 Select::make('achievement_module')
                     ->label(fn (Get $get): string => match ($get('achievement_category')) {
-                        'ummi' => 'Jilid Ke-',
-                        'tahfidz' => 'Juz Ke-',
-                        'doaHadist' => 'Modul Ke-',
+                        'Ummi' => 'Jilid Ke-',
+                        'Tahfidz' => 'Juz Ke-',
+                        'Doa & Hadist' => 'Modul Ke-',
                         default => 'Modul/Bagian',
                     })
                     ->options(function (Get $get): \Illuminate\Support\Collection { // MODIFIED: Return Support Collection
@@ -228,9 +229,9 @@ class ManageClassSession extends Page implements HasTable
                         $set('achievement_id', null);
                     })
                     ->placeholder(fn (Get $get): string => match ($get('achievement_category')) {
-                        'ummi' => 'Pilih Jilid',
-                        'tahfidz' => 'Pilih Juz',
-                        'doaHadist' => 'Pilih Modul',
+                        'Ummi' => 'Pilih Jilid',
+                        'Tahfidz' => 'Pilih Juz',
+                        'Doa & Hadist' => 'Pilih Modul',
                         default => 'Pilih Modul/Bagian',
                     }),
 
