@@ -2,10 +2,10 @@
     <x-filament::card>
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-2xl font-bold">
-                Class: {{ $record->semesterClass->nama_semester_class }}
+                Kelas: {{ $record->semesterClass->nama_semester_class }}
             </h2>
             <h3 class="text-lg">
-                Session Date: {{ $record->date->format('F j, Y H:i') }}
+                Tanggal Sesi: {{ $record->date->format('F j, Y H:i') }}
             </h3>
         </div>
 
@@ -19,8 +19,8 @@
             </p>
         </div>
 
-        <h3 class="text-xl font-semibold mb-2">Students in this Class</h3>
-        
+        <h3 class="text-xl font-semibold mb-2">Murid-murid di kelas ini</h3>
+
         {{ $studentsTable }}
     </x-filament::card>
 </x-filament::page>
