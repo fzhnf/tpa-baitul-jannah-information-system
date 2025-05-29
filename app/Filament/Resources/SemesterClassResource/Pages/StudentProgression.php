@@ -43,12 +43,28 @@ class StudentProgression extends Page implements HasTable, HasForms, HasActions
     public SemesterClass $semesterClass;
     public Student $student;
     public ?array $classNoteData = [];
+    public string $navigationSource = 'class'; // 'class' or 'student'
 
+    // Original mount method for class -> student navigation
     public function mount(SemesterClass $semesterClass, Student $student): void
     {
         $this->semesterClass = $semesterClass;
         $this->student = $student;
+        $this->navigationSource = 'class';
+        $this->loadClassNoteData();
+    }
 
+    // Alternative mount method for student -> class navigation
+    public function mountFromStudent(Student $student, SemesterClass $semesterClass): void
+    {
+        $this->student = $student;
+        $this->semesterClass = $semesterClass;
+        $this->navigationSource = 'student';
+        $this->loadClassNoteData();
+    }
+
+    private function loadClassNoteData(): void
+    {
         // Load existing class note data
         $classNote = ClassNote::where([
             'semester_class_id' => $this->semesterClass->id,
@@ -138,6 +154,7 @@ class StudentProgression extends Page implements HasTable, HasForms, HasActions
             })
             ->orderBy('tanggal', 'desc');
     }
+
     /**
      * @param mixed $record
      */
@@ -151,6 +168,7 @@ class StudentProgression extends Page implements HasTable, HasForms, HasActions
             default => $record->{$field} ?? '-'
         };
     }
+
     /**
      * @param mixed $record
      */
@@ -405,6 +423,7 @@ class StudentProgression extends Page implements HasTable, HasForms, HasActions
                 ->slideOver(),
         ];
     }
+
     /**
      * @param array<int,mixed> $data
      */
@@ -499,6 +518,15 @@ class StudentProgression extends Page implements HasTable, HasForms, HasActions
 
     public function getBreadcrumbs(): array
     {
+        if ($this->navigationSource === 'student') {
+            return [
+                url()->route('filament.admin.resources.students.index') => 'Students',
+                url()->route('filament.admin.resources.students.edit', ['record' => $this->student]) => $this->student->student_name,
+                '#' => "Progres - {$this->semesterClass->nama_semester_class}",
+            ];
+        }
+
+        // Default breadcrumbs for class navigation
         return [
             url()->route('filament.admin.resources.semester-classes.index') => 'Kelas Semester',
             url()->route('filament.admin.resources.semester-classes.edit', ['record' => $this->semesterClass]) => $this->semesterClass->nama_semester_class,

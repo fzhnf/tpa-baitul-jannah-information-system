@@ -32,7 +32,7 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->default()
             ->id('admin')
-            ->path('admin')
+            ->path('/')
             ->login(Login::class)
             ->passwordReset(RequestPasswordReset::class)
             ->emailVerification(EmailVerification::class)
@@ -110,7 +110,7 @@ class AdminPanelProvider extends PanelProvider
                     ->myProfile(
                         shouldRegisterUserMenu: true,
                         shouldRegisterNavigation: false,
-                        navigationGroup: 'Settings',
+                        navigationGroup: 'Pengaturan',
                         hasAvatars: true,
                         slug: 'my-profile'
                     )
