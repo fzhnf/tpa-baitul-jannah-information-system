@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             BlogsTableSeeder::class,
             ContactUsTableSeeder::class,
             MenuSeeder::class,
+            AcademicSeeder::class,
         ]);
     }
 }

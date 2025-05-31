@@ -9,7 +9,6 @@ use Symfony\Component\Uid\Ulid;
 use Faker\Factory as Faker;
 use App\Models\User;
 use App\Models\Blog\Category;
-use App\Models\Blog\Post;
 use Database\Factories\HtmlProvider;
 
 class BlogsTableSeeder extends Seeder
@@ -19,7 +18,7 @@ class BlogsTableSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public function run(): void
     {
         $this->seedCategories();
         $this->seedPosts();
@@ -28,7 +27,7 @@ class BlogsTableSeeder extends Seeder
     /**
      * Seed blog categories
      */
-    private function seedCategories()
+    private function seedCategories(): void
     {
         $faker = Faker::create();
 
@@ -112,7 +111,7 @@ class BlogsTableSeeder extends Seeder
     /**
      * Seed blog posts
      */
-    private function seedPosts()
+    private function seedPosts(): void
     {
         $faker = Faker::create();
 

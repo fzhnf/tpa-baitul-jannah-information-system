@@ -400,7 +400,7 @@ class ManageMail extends SettingsPage
             ->statePath('data');
     }
 
-    public function save(MailSettings $settings = null): void
+    public function save(?MailSettings $settings = null): void
     {
         try {
             $this->callHook('beforeValidate');
@@ -504,7 +504,7 @@ class ManageMail extends SettingsPage
         }
     }
 
-    public function sendTestMail(MailSettings $settings = null)
+    public function sendTestMail(?MailSettings $settings = null): void
     {
         $data = $this->form->getState();
 
@@ -544,7 +544,7 @@ class ManageMail extends SettingsPage
     }
 
 
-    public function sendSuccessNotification($title)
+    public function sendSuccessNotification($title): void
     {
         Notification::make()
                 ->title($title)
@@ -552,7 +552,7 @@ class ManageMail extends SettingsPage
                 ->send();
     }
 
-    public function sendErrorNotification($title)
+    public function sendErrorNotification($title): void
     {
         Notification::make()
                 ->title($title)
@@ -585,4 +585,3 @@ class ManageMail extends SettingsPage
         return __("page.mail_settings.subheading");
     }
 }
-

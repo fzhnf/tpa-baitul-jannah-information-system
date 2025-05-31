@@ -18,8 +18,8 @@ class CategoryDistributionWidget extends ChartWidget
 
     protected function getData(): array
     {
-        $categories = Category::withCount('posts')
-            ->having('posts_count', '>', 0)
+        $categories = Category::whereHas('posts')
+            ->withCount('posts')
             ->orderByDesc('posts_count')
             ->limit(8)
             ->get();

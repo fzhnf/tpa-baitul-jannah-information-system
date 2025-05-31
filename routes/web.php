@@ -1,8 +1,9 @@
 <?php
 
-use App\Livewire\SuperDuper\BlogList;
-use App\Livewire\SuperDuper\BlogDetails;
-use App\Livewire\SuperDuper\Pages\ContactUs;
+use App\Filament\Resources\Academic\SemesterClassResource\Pages\StudentProgression;
+use App\Livewire\Superduper\BlogList;
+use App\Livewire\Superduper\BlogDetails;
+use App\Livewire\Superduper\Pages\ContactUs;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -42,6 +43,13 @@ Route::post('/contact', [App\Http\Controllers\ContactController::class, 'submit'
     ->name('contact.submit');
 
 // TODO: Create actual blog preview component
-Route::post('/blog-preview', function() {
+Route::post('/blog-preview', function () {
     // Implementation pending
 })->name('blog.preview');
+
+
+Route::get(
+    '/admin/students/{student}/classes/{semesterClass}/progression',
+    [StudentProgression::class, 'mountFromStudent']
+)
+    ->name('filament.admin.resources.students.progression');

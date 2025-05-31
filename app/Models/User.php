@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Closure;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasName;
@@ -21,8 +22,11 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable implements FilamentUser, MustVerifyEmail, HasAvatar, HasName, HasMedia
 {
     use InteractsWithMedia;
-    use HasUuids, HasRoles;
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasUuids;
+    use HasRoles;
+    use HasApiTokens;
+    use HasFactory;
+    use Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -77,7 +81,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
     }
 
     // Define an accessor for the 'name' attribute
-    public function getNameAttribute()
+    public function getNameAttribute(): string
     {
         return "{$this->firstname} {$this->lastname}";
     }
@@ -92,5 +96,13 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
         $this->addMediaConversion('thumb')
             ->fit(Fit::Contain, 300, 300)
             ->nonQueued();
+    }
+
+    /**
+     * @param Closure(<missing>): <missing> $closure
+     * @param Closure(): void $closure
+     */
+    public static function whereHas(string $string, Closure $closure): void
+    {
     }
 }

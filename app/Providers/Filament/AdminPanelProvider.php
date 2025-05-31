@@ -37,18 +37,15 @@ class AdminPanelProvider extends PanelProvider
             ->login(Login::class)
             ->passwordReset(RequestPasswordReset::class)
             ->emailVerification(EmailVerification::class)
-            ->favicon(fn(GeneralSettings $settings) => Storage::url($settings->site_favicon))
-            ->brandName(fn(GeneralSettings $settings) => $settings->brand_name)
-            ->brandLogo(fn(GeneralSettings $settings) => Storage::url($settings->brand_logo))
-            ->brandLogoHeight(fn(GeneralSettings $settings) => $settings->brand_logoHeight)
-            ->colors(fn(GeneralSettings $settings) => $settings->site_theme)
+            ->favicon(fn (GeneralSettings $settings) => Storage::url($settings->site_favicon))
+            ->brandName(fn (GeneralSettings $settings) => $settings->brand_name)
+            ->brandLogo(fn (GeneralSettings $settings) => Storage::url($settings->brand_logo))
+            ->brandLogoHeight(fn (GeneralSettings $settings) => $settings->brand_logoHeight)
+            ->colors(fn (GeneralSettings $settings) => $settings->site_theme)
             ->databaseNotifications()->databaseNotificationsPolling('30s')
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
             ->sidebarCollapsibleOnDesktop()
             ->navigationGroups([
-                Navigation\NavigationGroup::make()
-                    ->label(__('menu.nav_group.content'))
-                    ->collapsible(false),
                 Navigation\NavigationGroup::make()
                     ->label(__('menu.nav_group.access'))
                     ->collapsible(false),
@@ -64,7 +61,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigationItems([
                 Navigation\NavigationItem::make('Log Viewer') // !! To-Do: lang
-                    ->visible(fn(): bool => auth()->user()->can('access_log_viewer'))
+                    ->visible(fn (): bool => auth()->user()->can('access_log_viewer'))
                     ->url(config('app.url') . '/' . config('log-viewer.route_path'), shouldOpenInNewTab: true)
                     ->icon('fluentui-document-bullet-list-multiple-20-o')
                     ->group(__('menu.nav_group.activities'))
@@ -72,9 +69,6 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
-            ->resources([
-                config('filament-logger.activity_resource')
-            ])
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
                 Pages\Dashboard::class,
