@@ -46,16 +46,23 @@ class AdminPanelProvider extends PanelProvider
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
             ->sidebarCollapsibleOnDesktop()
             ->navigationGroups([
-                Navigation\NavigationGroup::make()
-                    ->label(__('menu.nav_group.access'))
-                    ->collapsible(false),
-                Navigation\NavigationGroup::make()
+                'academic' => Navigation\NavigationGroup::make()
+                    ->label(__('menu.nav_group.academic')),
+                'banner' => Navigation\NavigationGroup::make()
+                    ->label(__('menu.nav_group.banner')),
+                'blog' => Navigation\NavigationGroup::make()
+                    ->label(__('menu.nav_group.blog')),
+                'content' => Navigation\NavigationGroup::make()
+                    ->label(__('menu.nav_group.content')),
+                'access' => Navigation\NavigationGroup::make()
+                    ->label(__('menu.nav_group.access')),
+                'sites' => Navigation\NavigationGroup::make()
                     ->label(__('menu.nav_group.sites'))
                     ->collapsed(),
-                Navigation\NavigationGroup::make()
+                'settings' => Navigation\NavigationGroup::make()
                     ->label(__('menu.nav_group.settings'))
                     ->collapsed(),
-                Navigation\NavigationGroup::make()
+                'activities' => Navigation\NavigationGroup::make()
                     ->label(__('menu.nav_group.activities'))
                     ->collapsed(),
             ])

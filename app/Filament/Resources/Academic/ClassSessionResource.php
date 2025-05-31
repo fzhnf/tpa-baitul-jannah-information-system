@@ -20,7 +20,6 @@ class ClassSessionResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clock';
 
-    protected static ?string $navigationGroup = 'Manajemen Akademik';
 
     protected static ?int $navigationSort = 1; // Smaller number = higher up
 
@@ -92,6 +91,12 @@ class ClassSessionResource extends Resource
                 ]),
             ]);
     }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __("menu.nav_group.academic");
+    }
+
 
     public static function getRelations(): array
     {

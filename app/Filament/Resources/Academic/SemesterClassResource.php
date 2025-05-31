@@ -22,7 +22,6 @@ class SemesterClassResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
-    protected static ?string $navigationGroup = 'Manajemen Akademik';
 
     protected static ?int $navigationSort = 2; // Smaller number = higher up
 
@@ -85,6 +84,12 @@ class SemesterClassResource extends Resource
                 ]),
             ]);
     }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __("menu.nav_group.academic");
+    }
+
 
     public static function getRelations(): array
     {

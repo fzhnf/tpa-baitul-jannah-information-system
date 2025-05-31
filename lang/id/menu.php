@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'nav_group.academic' => 'Akademik',
     'nav_group.access' => 'Mengakses',
     'nav_group.activities' => 'Aktivitas',
     'nav_group.banner' => 'Spanduk',

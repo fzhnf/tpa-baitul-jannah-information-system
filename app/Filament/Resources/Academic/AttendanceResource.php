@@ -23,7 +23,6 @@ class AttendanceResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard';
 
-    protected static ?string $navigationGroup = 'Manajemen Akademik';
 
     protected static ?int $navigationSort = 4; // Smaller number = higher up
 
@@ -124,6 +123,12 @@ class AttendanceResource extends Resource
                 ]),
             ]);
     }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __("menu.nav_group.academic");
+    }
+
 
     public static function getRelations(): array
     {

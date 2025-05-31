@@ -6,6 +6,7 @@ return [
     | Navigation Group
     |--------------------------------------------------------------------------
     */
+    'nav_group.academic' => 'Academic',
     'nav_group.access' => 'Access',
     'nav_group.activities' => 'Activities',
     'nav_group.banner' => 'Banner',

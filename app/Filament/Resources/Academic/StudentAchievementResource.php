@@ -23,7 +23,6 @@ class StudentAchievementResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-star';
 
-    protected static ?string $navigationGroup = 'Manajemen Akademik';
 
     protected static ?int $navigationSort = 5; // Smaller number = higher up
 
@@ -295,6 +294,12 @@ class StudentAchievementResource extends Resource
                 ]),
             ]);
     }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __("menu.nav_group.academic");
+    }
+
 
     public static function getRelations(): array
     {

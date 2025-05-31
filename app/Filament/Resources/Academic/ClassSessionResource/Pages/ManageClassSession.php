@@ -213,8 +213,8 @@ class ManageClassSession extends Page implements HasTable
                             return collect(); // Return empty Support Collection
                         }
                         // Fetch distinct modules, plucking 'module' for both value and label
-                        return \App\Models\Achievement::query()
-                            ->where('category', $category)
+                        return \App\Models\Academic\Achievement
+::query()
                             ->orderBy('module') // Order in SQL before plucking
                             ->distinct()       // Get distinct rows based on the selected column(s)
                             ->pluck('module', 'module'); // Returns Support\Collection of ['module_value' => 'module_label']
@@ -246,8 +246,8 @@ class ManageClassSession extends Page implements HasTable
                         }
 
                         try {
-                            $achievements = \App\Models\Achievement::query()
-                                ->where('category', $category)
+                            $achievements = \App\Models\Academic\Achievement
+::query()
                                 ->where('module', $module)
                                 ->orderBy('achievement_name') // Or any other relevant order
                                 ->get(); // Eloquent Collection
@@ -273,8 +273,8 @@ class ManageClassSession extends Page implements HasTable
                     ->visible(fn (Get $get): bool => filled($get('achievement_category')) && filled($get('achievement_module'))) // Show only if category and module are selected
                     ->hint(function (Get $get) {
                         if (filled($get('achievement_category')) && filled($get('achievement_module'))) {
-                            $count = \App\Models\Achievement::query()
-                                ->where('category', $get('achievement_category'))
+                            $count = \App\Models\Academic\Achievement
+::query()
                                 ->where('module', $get('achievement_module'))
                                 ->count();
                             if ($count === 0) {
@@ -308,8 +308,8 @@ class ManageClassSession extends Page implements HasTable
                 // Ensure the selected achievement exists with the given category and module
                 // This check is implicitly handled if achievement_id is successfully fetched
                 // but an explicit check can be added if desired.
-                if (! \App\Models\Achievement::where('id', $data['achievement_id'])->exists()) {
-                    throw new \Exception('Selected achievement does not exist or is invalid for the chosen filters.');
+                if (! \App\Models\Academic\Achievement
+::where('id', $data['achievement_id'])->exists()) {
                 }
 
                 // Assuming $this->record refers to the ClassSession model instance from the page/resource context
@@ -330,7 +330,7 @@ class ManageClassSession extends Page implements HasTable
                     'fashohah' => $data['fashohah'] ?? '-',
                 ];
 
-                \App\Models\StudentAchievement::create($studentAchievementData);
+                \App\Models\Academic\StudentAchievement::create($studentAchievementData);
 
                 Notification::make()
                     ->title('Achievement added successfully')
@@ -406,7 +406,7 @@ class ManageClassSession extends Page implements HasTable
                             if (isset($data['achievements'])) {
                                 foreach ($data['achievements'] as $achievementData) {
                                     if (isset($achievementData['id'])) {
-                                        \App\Models\StudentAchievement::where('id', $achievementData['id'])
+                                        \App\Models\Academic\StudentAchievement::where('id', $achievementData['id'])
                                             ->update([
                                                 'keterangan' => $achievementData['keterangan'] ?? null,
                                                 'catatan' => $achievementData['catatan'] ?? null,

@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\Academic\StudentResource\RelationManagers;
 
-use App\Models\SemesterClass;
-use Filament\Forms;
+use App\Models\Academic\SemesterClass
+;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;

@@ -25,7 +25,6 @@ class AchievementResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-trophy';
 
-    protected static ?string $navigationGroup = 'Manajemen Akademik';
 
     protected static ?int $navigationSort = 7; // Smaller number = higher up
 
@@ -142,6 +141,11 @@ class AchievementResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __("menu.nav_group.academic");
     }
 
     public static function getRelations(): array
