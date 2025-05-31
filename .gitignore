@@ -19,3 +19,4 @@ yarn-error.log
 /.vscode
 /-local
 setup.php.disabled
+/.php-cs-fixer.cache
