@@ -96,4 +96,13 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail, Has
             ->fit(Fit::Contain, 300, 300)
             ->nonQueued();
     }
+
+    /**
+     * @return BelongsToMany<SemesterClass,User>
+     */
+    public function semesterClasses(): BelongsToMany
+    {
+        return $this->belongsToMany(SemesterClass::class, 'semester_class_teacher');
+    }
+
 }

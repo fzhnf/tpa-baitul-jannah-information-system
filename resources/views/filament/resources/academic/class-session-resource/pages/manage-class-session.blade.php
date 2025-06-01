@@ -5,7 +5,7 @@
                 Class: {{ $record->semesterClass->nama_semester_class }}
             </h2>
             <h3 class="text-lg">
-                Session Date: {{ $record->date->format('F j, Y H:i') }}
+                tanggal: {{ $record->date->format('F j, Y H:i') }}
             </h3>
         </div>
 
@@ -20,7 +20,7 @@
         </div>
 
         <h3 class="text-xl font-semibold mb-2">Students in this Class</h3>
-        
+
         {{ $studentsTable }}
     </x-filament::card>
 </x-filament::page>

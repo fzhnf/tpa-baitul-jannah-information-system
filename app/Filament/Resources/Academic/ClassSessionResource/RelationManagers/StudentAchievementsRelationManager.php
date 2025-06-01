@@ -60,9 +60,6 @@ class StudentAchievementsRelationManager extends RelationManager
                 ->maxLength(255)
                 ->label('Deskripsi'),
 
-            Forms\Components\Textarea::make('catatan')
-                ->maxLength(65535)
-                ->label('Catatan'),
 
             Forms\Components\Section::make('Evaluasi')->schema([
                 Forms\Components\Select::make('makruj')

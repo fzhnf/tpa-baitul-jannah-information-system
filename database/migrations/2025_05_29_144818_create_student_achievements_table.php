@@ -17,7 +17,6 @@ return new class () extends Migration {
             $table->foreignId('achievement_id')->constrained()->onDelete('cascade');
             $table->date('tanggal');
             $table->string('keterangan')->nullable();
-            $table->text('catatan')->nullable();
             $table->string('makruj')->nullable();
             $table->string('mad')->nullable();
             $table->string('tajwid')->nullable();

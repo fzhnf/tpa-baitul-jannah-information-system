@@ -132,8 +132,9 @@ class StudentProgression extends Page implements HasTable, HasForms, HasActions
 
                 TextColumn::make('kelancaran')
                     ->label('K')
+                    ->getStateUsing(fn ($record) => $this->getEvaluationValue($record, 'kelancaran'))
                     ->badge()
-                    ->color('success'),
+                    ->color(fn ($record) => $this->getEvaluationColor($record, 'kelancaran')),
 
                 TextColumn::make('fashohah')
                     ->label('F')
@@ -163,8 +164,9 @@ class StudentProgression extends Page implements HasTable, HasForms, HasActions
         $category = $record->achievement->category;
 
         return match ($field) {
-            'makruj', 'mad', 'tajwid' => in_array($category, ['Ummi', 'Tahfidz']) ? $record->{$field} : '-',
-            'fashohah' => $category === 'Doa & Hadist' ? $record->{$field} : '-',
+            'makruj', 'mad', 'tajwid' => in_array($category, ['Ummi', 'Tahfidz']) ? ($record->{$field} ?? '-') : '-',
+            'kelancaran' => in_array($category, ['Ummi', 'Tahfidz', 'Doa & Hadist']) ? ($record->{$field} ?? '-') : '-',
+            'fashohah' => $category === 'Doa & Hadist' ? ($record->{$field} ?? '-') : '-',
             default => $record->{$field} ?? '-'
         };
     }
@@ -175,10 +177,30 @@ class StudentProgression extends Page implements HasTable, HasForms, HasActions
     private function getEvaluationColor($record, string $field): string
     {
         $category = $record->achievement->category;
+        $value = $record->{$field} ?? null;
+
+        // Return gray for empty values
+        if (empty($value) || $value === '-') {
+            return 'gray';
+        }
 
         return match ($field) {
-            'makruj', 'mad', 'tajwid' => in_array($category, ['Ummi', 'Tahfidz']) ? 'primary' : 'gray',
-            'fashohah' => $category === 'Doa & Hadist' ? 'warning' : 'gray',
+            'makruj', 'mad', 'tajwid' => in_array($category, ['Ummi', 'Tahfidz']) ? $this->getGradeColor($value) : 'gray',
+            'kelancaran' => in_array($category, ['Ummi', 'Tahfidz', 'Doa & Hadist']) ? $this->getGradeColor($value) : 'gray',
+            'fashohah' => $category === 'Doa & Hadist' ? $this->getGradeColor($value) : 'gray',
+            default => 'gray'
+        };
+    }
+
+    /**
+     * Get color based on grade value
+     */
+    private function getGradeColor(string $grade): string
+    {
+        return match ($grade) {
+            'A' => 'success',
+            'B+', 'B' => 'primary',
+            'C+', 'C' => 'warning',
             default => 'gray'
         };
     }

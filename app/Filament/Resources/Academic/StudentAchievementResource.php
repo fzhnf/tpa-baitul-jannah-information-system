@@ -147,11 +147,6 @@ class StudentAchievementResource extends Resource
             Forms\Components\TextInput::make('keterangan')
                 ->maxLength(255)
                 ->label('Keterangan'),
-
-            Forms\Components\Textarea::make('catatan')
-                ->columnSpanFull()
-                ->maxLength(65535)
-                ->label('Catatan'),
  Forms\Components\Section::make('Evaluasi')->schema([
     Forms\Components\Select::make('makruj')
         ->options($gradeOptions)

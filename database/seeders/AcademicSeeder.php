@@ -146,7 +146,6 @@ class AcademicSeeder extends Seeder
                 'class_session_id' => fake()->randomElement(array_column($classSessions, 'id')),
                 'tanggal' => fake()->date(),
                 'keterangan' => fake()->sentence(),
-                'catatan' => fake()->paragraph(),
                 'makruj' => fake()->numberBetween(1, 5),
                 'mad' => fake()->numberBetween(1, 5),
                 'tajwid' => fake()->numberBetween(1, 5),

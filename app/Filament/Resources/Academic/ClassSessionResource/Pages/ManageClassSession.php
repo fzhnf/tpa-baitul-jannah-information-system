@@ -18,7 +18,6 @@ use Filament\Tables;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Collection;
 
 class ManageClassSession extends Page implements HasTable
 {
@@ -112,32 +111,20 @@ class ManageClassSession extends Page implements HasTable
                         'absen' => 'danger',
                         default => 'gray',
                     }),
+                    Tables\Columns\TextColumn::make('achievements')
+                        ->label('Achievements')
+                        ->getStateUsing(function ($record) use ($classSessionId) {
+                            $achievements = $record->studentAchievements
+                                ->where('class_session_id', $classSessionId)
+                                ->pluck('achievement.achievement_name')
+                                ->filter()
+                                ->unique()
+                                ->toArray(); // Convert to array
 
-                // Updated to show multiple achievements
-                Tables\Columns\TextColumn::make('achievements')
-                    ->label('Achievements')
-                    ->getStateUsing(function ($record) use ($classSessionId) {
-                        $achievements = $record->studentAchievements
-                            ->where('class_session_id', $classSessionId)
-                            ->pluck('achievement.achievement_name')
-                            ->filter()
-                            ->unique();
-
-                        return $achievements->count() > 0
-                            ? $achievements->join(', ')
-                            : '—';
-                    })
-                    ->wrap(),
-
-                Tables\Columns\TextColumn::make('achievement_count')
-                    ->label('Count')
-                    ->getStateUsing(function ($record) use ($classSessionId) {
-                        return $record->studentAchievements
-                            ->where('class_session_id', $classSessionId)
-                            ->count();
-                    })
-                    ->badge()
-                    ->color('success'),
+                            return $achievements; // Return array of achievement names
+                        })
+                        ->listWithLineBreaks() // Display each achievement on a new line
+                        ->wrap(),
             ])
             ->actions([
                 Tables\Actions\Action::make('setAttendance')
@@ -176,180 +163,209 @@ class ManageClassSession extends Page implements HasTable
                         ])->first()?->toArray() ?? [];
                     }),
 
- Tables\Actions\Action::make('addAchievement')
-        ->label('Add Achievement')
-        ->icon('heroicon-o-plus')
-        ->color('success')
-        ->form(function () use ($gradeOptions) { // Pass $gradeOptions if defined outside
-            $categoryOptions = [
-                'Ummi' => 'Ummi',
-                'Tahfidz' => 'Tahfidz',
-                'Doa & Hadist' => 'Doa Hadist',
-            ];
+                Tables\Actions\Action::make('addAchievement')
+                    ->label('Add Achievement')
+                    ->icon('heroicon-o-plus')
+                    ->color('success')
+                    ->form(function () use ($gradeOptions) {
+                        $categoryOptions = [
+                            'Ummi' => 'Ummi',
+                            'Tahfidz' => 'Tahfidz',
+                            'Doa & Hadist' => 'Doa Hadist',
+                        ];
 
-            return [
-                Select::make('achievement_category')
-                    ->label('Kategori Pencapaian')
-                    ->options($categoryOptions)
-                    ->live() // Make this field reactive
-                    ->searchable()
-                    ->required()
-                    ->afterStateUpdated(function (callable $set) {
-                        // Reset module and achievement when category changes
-                        $set('achievement_module', null);
-                        $set('achievement_id', null);
-                    }),
+                        return [
+                            Select::make('achievement_category')
+                                ->label('Kategori Pencapaian')
+                                ->options($categoryOptions)
+                                ->live()
+                                ->searchable()
+                                ->required()
+                                ->afterStateUpdated(function (callable $set) {
+                                    // Reset all dependent fields when category changes
+                                    $set('achievement_module', null);
+                                    $set('achievement_id', null);
+                                    $set('mad', null);
+                                    $set('makruj', null);
+                                    $set('tajwid', null);
+                                    $set('kelancaran', null);
+                                    $set('fashohah', null);
+                                }),
 
-                Select::make('achievement_module')
-                    ->label(fn (Get $get): string => match ($get('achievement_category')) {
-                        'Ummi' => 'Jilid Ke-',
-                        'Tahfidz' => 'Juz Ke-',
-                        'Doa & Hadist' => 'Modul Ke-',
-                        default => 'Modul/Bagian',
+                            Select::make('achievement_module')
+                                ->label(fn (Get $get): string => match ($get('achievement_category')) {
+                                    'Ummi' => 'Jilid Ke-',
+                                    'Tahfidz' => 'Juz Ke-',
+                                    'Doa & Hadist' => 'Modul Ke-',
+                                    default => 'Modul/Bagian',
+                                })
+                                ->options(function (Get $get): \Illuminate\Support\Collection {
+                                    $category = $get('achievement_category');
+                                    if (!$category) {
+                                        return collect();
+                                    }
+                                    return \App\Models\Academic\Achievement::query()
+                                        ->orderBy('module')
+                                        ->distinct()
+                                        ->pluck('module', 'module');
+                                })
+                                ->live()
+                                ->searchable()
+                                ->required()
+                                ->visible(fn (Get $get): bool => filled($get('achievement_category')))
+                                ->afterStateUpdated(function (callable $set) {
+                                    // Reset dependent fields when module changes
+                                    $set('achievement_id', null);
+                                    $set('mad', null);
+                                    $set('makruj', null);
+                                    $set('tajwid', null);
+                                    $set('kelancaran', null);
+                                    $set('fashohah', null);
+                                })
+                                ->placeholder(fn (Get $get): string => match ($get('achievement_category')) {
+                                    'Ummi' => 'Pilih Jilid',
+                                    'Tahfidz' => 'Pilih Juz',
+                                    'Doa & Hadist' => 'Pilih Modul',
+                                    default => 'Pilih Modul/Bagian',
+                                }),
+
+                            Select::make('achievement_id')
+                                ->label('Pencapaian Spesifik')
+                                ->options(function (Get $get): \Illuminate\Support\Collection {
+                                    $category = $get('achievement_category');
+                                    $module = $get('achievement_module');
+
+                                    if (!$category || !$module) {
+                                        return collect();
+                                    }
+
+                                    try {
+                                        $achievements = \App\Models\Academic\Achievement::query()
+                                            ->where('module', $module)
+                                            ->orderBy('achievement_name')
+                                            ->get();
+
+                                        if ($achievements->isEmpty()) {
+                                            \Log::warning('No achievements found for selected category and module', ['category' => $category, 'module' => $module]);
+                                            return collect();
+                                        }
+                                        return $achievements->pluck('achievement_name', 'id');
+                                    } catch (\Exception $e) {
+                                        \Log::error('Failed to load achievements for form', [
+                                            'error' => $e->getMessage(),
+                                            'category' => $category,
+                                            'module' => $module,
+                                            'trace' => $e->getTraceAsString(),
+                                        ]);
+                                        return collect();
+                                    }
+                                })
+                                ->required()
+                                ->searchable()
+                                ->preload()
+                                ->visible(fn (Get $get): bool => filled($get('achievement_category')) && filled($get('achievement_module')))
+                                ->afterStateUpdated(function (callable $set) {
+                                    // Reset grade fields when achievement changes
+                                    $set('mad', null);
+                                    $set('makruj', null);
+                                    $set('tajwid', null);
+                                    $set('kelancaran', null);
+                                    $set('fashohah', null);
+                                })
+                                ->hint(function (Get $get) {
+                                    if (filled($get('achievement_category')) && filled($get('achievement_module'))) {
+                                        $count = \App\Models\Academic\Achievement::query()
+                                            ->where('module', $get('achievement_module'))
+                                            ->count();
+                                        if ($count === 0) {
+                                            return 'No achievements available for this category/module. Please create some first.';
+                                        }
+                                    } elseif (!filled($get('achievement_category'))) {
+                                        return 'Pilih kategori terlebih dahulu.';
+                                    } elseif (!filled($get('achievement_module'))) {
+                                        return 'Pilih modul/bagian terlebih dahulu.';
+                                    }
+                                    return null;
+                                }),
+
+                            Textarea::make('keterangan')
+                                ->maxLength(255)
+                                ->label('Description'),
+
+
+                            // Conditional grade fields based on category
+                            Select::make('mad')
+                                ->label('Mad')
+                                ->options($gradeOptions)
+                                ->default('-')
+                                ->visible(fn (Get $get): bool => in_array($get('achievement_category'), ['Ummi', 'Tahfidz'])),
+
+                            Select::make('makruj')
+                                ->label('Makruj')
+                                ->options($gradeOptions)
+                                ->default('-')
+                                ->visible(fn (Get $get): bool => in_array($get('achievement_category'), ['Ummi', 'Tahfidz'])),
+
+                            Select::make('tajwid')
+                                ->label('Tajwid')
+                                ->options($gradeOptions)
+                                ->default('-')
+                                ->visible(fn (Get $get): bool => in_array($get('achievement_category'), ['Ummi', 'Tahfidz'])),
+
+                            Select::make('kelancaran')
+                                ->label('Kelancaran')
+                                ->options($gradeOptions)
+                                ->default('-')
+                                ->visible(fn (Get $get): bool => filled($get('achievement_category'))), // Show for all categories
+
+                            Select::make('fashohah')
+                                ->label('Fashohah')
+                                ->options($gradeOptions)
+                                ->default('-')
+                                ->visible(fn (Get $get): bool => $get('achievement_category') === 'Doa & Hadist'),
+                        ];
                     })
-                    ->options(function (Get $get): \Illuminate\Support\Collection { // MODIFIED: Return Support Collection
-                        $category = $get('achievement_category');
-                        if (!$category) {
-                            return collect(); // Return empty Support Collection
-                        }
-                        // Fetch distinct modules, plucking 'module' for both value and label
-                        return \App\Models\Academic\Achievement
-::query()
-                            ->orderBy('module') // Order in SQL before plucking
-                            ->distinct()       // Get distinct rows based on the selected column(s)
-                            ->pluck('module', 'module'); // Returns Support\Collection of ['module_value' => 'module_label']
-                    })
-                    // REMOVED: getOptionValueFromRecordUsing and getOptionLabelFromRecordUsing
-                    ->live() // Make this field reactive
-                    ->searchable()
-                    ->required()
-                    ->visible(fn (Get $get): bool => filled($get('achievement_category'))) // Show only if category is selected
-                    ->afterStateUpdated(function (callable $set) {
-                        // Reset achievement when module changes
-                        $set('achievement_id', null);
-                    })
-                    ->placeholder(fn (Get $get): string => match ($get('achievement_category')) {
-                        'Ummi' => 'Pilih Jilid',
-                        'Tahfidz' => 'Pilih Juz',
-                        'Doa & Hadist' => 'Pilih Modul',
-                        default => 'Pilih Modul/Bagian',
-                    }),
-
-                Select::make('achievement_id')
-                    ->label('Pencapaian Spesifik')
-                    ->options(function (Get $get): \Illuminate\Support\Collection { // This one correctly returns Support\Collection from pluck
-                        $category = $get('achievement_category');
-                        $module = $get('achievement_module');
-
-                        if (!$category || !$module) {
-                            return collect(); // Return empty if category or module not selected
-                        }
-
+                    ->action(function (array $data, $record): void {
                         try {
-                            $achievements = \App\Models\Academic\Achievement
-::query()
-                                ->where('module', $module)
-                                ->orderBy('achievement_name') // Or any other relevant order
-                                ->get(); // Eloquent Collection
-
-                            if ($achievements->isEmpty()) {
-                                \Log::warning('No achievements found for selected category and module', ['category' => $category, 'module' => $module]);
-                                return collect(); // Empty Support Collection
+                            if (! \App\Models\Academic\Achievement::where('id', $data['achievement_id'])->exists()) {
+                                throw new \Exception('Selected achievement does not exist.');
                             }
-                            return $achievements->pluck('achievement_name', 'id'); // Support Collection
+
+                            $classSession = $this->record;
+
+                            $studentAchievementData = [
+                                'student_id' => $record->id,
+                                'class_session_id' => $classSession->id,
+                                'achievement_id' => $data['achievement_id'],
+                                'tanggal' => $classSession->date->format('Y-m-d'),
+                                'keterangan' => $data['keterangan'] ?? null,
+                                'makruj' => $data['makruj'] ?? '-',
+                                'mad' => $data['mad'] ?? '-',
+                                'tajwid' => $data['tajwid'] ?? '-',
+                                'kelancaran' => $data['kelancaran'] ?? '-',
+                                'fashohah' => $data['fashohah'] ?? '-',
+                            ];
+
+                            \App\Models\Academic\StudentAchievement::create($studentAchievementData);
+
+                            Notification::make()
+                                ->title('Achievement added successfully')
+                                ->success()
+                                ->send();
                         } catch (\Exception $e) {
-                            \Log::error('Failed to load achievements for form', [
+                            \Log::error('Achievement save error', [
                                 'error' => $e->getMessage(),
-                                'category' => $category,
-                                'module' => $module,
+                                'data' => $data,
                                 'trace' => $e->getTraceAsString(),
                             ]);
-                            return collect(); // Empty Support Collection
+
+                            Notification::make()
+                                ->title('Error adding achievement')
+                                ->body($e->getMessage())
+                                ->danger()
+                                ->send();
                         }
-                    })
-                    ->required()
-                    ->searchable()
-                    ->preload() // Preload options after they are filtered
-                    ->visible(fn (Get $get): bool => filled($get('achievement_category')) && filled($get('achievement_module'))) // Show only if category and module are selected
-                    ->hint(function (Get $get) {
-                        if (filled($get('achievement_category')) && filled($get('achievement_module'))) {
-                            $count = \App\Models\Academic\Achievement
-::query()
-                                ->where('module', $get('achievement_module'))
-                                ->count();
-                            if ($count === 0) {
-                                return 'No achievements available for this category/module. Please create some first.';
-                            }
-                        } elseif (!filled($get('achievement_category'))) {
-                            return 'Pilih kategori terlebih dahulu.';
-                        } elseif (!filled($get('achievement_module'))) {
-                            return 'Pilih modul/bagian terlebih dahulu.';
-                        }
-                        return null;
                     }),
-
-                Textarea::make('keterangan')
-                    ->maxLength(255)
-                    ->label('Description'),
-                Textarea::make('catatan')
-                    ->maxLength(65535)
-                    ->label('Notes'),
-
-                // Grade options (assuming $gradeOptions is available)
-                Select::make('makruj')->options($gradeOptions)->default('-'),
-                Select::make('mad')->options($gradeOptions)->default('-'),
-                Select::make('tajwid')->options($gradeOptions)->default('-'),
-                Select::make('kelancaran')->options($gradeOptions)->default('-'),
-                Select::make('fashohah')->options($gradeOptions)->default('-'),
-            ];
-        })
-        ->action(function (array $data, $record): void { // $record here is the student
-            try {
-                // Ensure the selected achievement exists with the given category and module
-                // This check is implicitly handled if achievement_id is successfully fetched
-                // but an explicit check can be added if desired.
-                if (! \App\Models\Academic\Achievement
-::where('id', $data['achievement_id'])->exists()) {
-                }
-
-                // Assuming $this->record refers to the ClassSession model instance from the page/resource context
-                // And $record refers to the student model instance from the table row action
-                $classSession = $this->record; // If this action is on a page related to a single ClassSession
-
-                $studentAchievementData = [
-                    'student_id' => $record->id, // $record is the student
-                    'class_session_id' => $classSession->id, // $this->record is the ClassSession
-                    'achievement_id' => $data['achievement_id'],
-                    'tanggal' => $classSession->date->format('Y-m-d'), // Use class session date
-                    'keterangan' => $data['keterangan'] ?? null,
-                    'catatan' => $data['catatan'] ?? null,
-                    'makruj' => $data['makruj'] ?? '-',
-                    'mad' => $data['mad'] ?? '-',
-                    'tajwid' => $data['tajwid'] ?? '-',
-                    'kelancaran' => $data['kelancaran'] ?? '-',
-                    'fashohah' => $data['fashohah'] ?? '-',
-                ];
-
-                \App\Models\Academic\StudentAchievement::create($studentAchievementData);
-
-                Notification::make()
-                    ->title('Achievement added successfully')
-                    ->success()
-                    ->send();
-            } catch (\Exception $e) {
-                \Log::error('Achievement save error', [
-                    'error' => $e->getMessage(),
-                    'data' => $data, // Be cautious logging all data if it contains sensitive info
-                    'trace' => $e->getTraceAsString(),
-                ]);
-
-                Notification::make()
-                    ->title('Error adding achievement')
-                    ->body($e->getMessage()) // Provide a user-friendly message
-                    ->danger()
-                    ->send();
-            }
-        }),
 
                 // New action to view/manage existing achievements
                 Tables\Actions\Action::make('manageAchievements')
@@ -361,7 +377,7 @@ class ManageClassSession extends Page implements HasTable
                             ->where('class_session_id', $classSessionId)
                             ->count() > 0;
                     })
-                    ->form(function ($record) use ($classSessionId) {
+                    ->form(function ($record) use ($classSessionId, $gradeOptions) {
                         $achievements = $record->studentAchievements
                             ->where('class_session_id', $classSessionId);
 
@@ -378,23 +394,25 @@ class ManageClassSession extends Page implements HasTable
                                 Textarea::make("achievements.{$index}.keterangan")
                                     ->label('Description')
                                     ->default($achievement->keterangan),
-                                Textarea::make("achievements.{$index}.catatan")
-                                    ->label('Notes')
-                                    ->default($achievement->catatan),
                                 Select::make("achievements.{$index}.makruj")
-                                    ->options(['-' => '-', 'A' => 'A', 'B+' => 'B+', 'B' => 'B', 'B-' => 'B-', 'C' => 'C'])
+                                    ->label('Makruj')
+                                    ->options($gradeOptions)
                                     ->default($achievement->makruj ?? '-'),
                                 Select::make("achievements.{$index}.mad")
-                                    ->options(['-' => '-', 'A' => 'A', 'B+' => 'B+', 'B' => 'B', 'B-' => 'B-', 'C' => 'C'])
+                                    ->label('Mad')
+                                    ->options($gradeOptions)
                                     ->default($achievement->mad ?? '-'),
                                 Select::make("achievements.{$index}.tajwid")
-                                    ->options(['-' => '-', 'A' => 'A', 'B+' => 'B+', 'B' => 'B', 'B-' => 'B-', 'C' => 'C'])
+                                    ->label('Tajwid')
+                                    ->options($gradeOptions)
                                     ->default($achievement->tajwid ?? '-'),
                                 Select::make("achievements.{$index}.kelancaran")
-                                    ->options(['-' => '-', 'A' => 'A', 'B+' => 'B+', 'B' => 'B', 'B-' => 'B-', 'C' => 'C'])
+                                    ->label('Kelancaran')
+                                    ->options($gradeOptions)
                                     ->default($achievement->kelancaran ?? '-'),
                                 Select::make("achievements.{$index}.fashohah")
-                                    ->options(['-' => '-', 'A' => 'A', 'B+' => 'B+', 'B' => 'B', 'B-' => 'B-', 'C' => 'C'])
+                                    ->label('Fashohah')
+                                    ->options($gradeOptions)
                                     ->default($achievement->fashohah ?? '-'),
                             ])->columns(2);
                         }
@@ -409,7 +427,6 @@ class ManageClassSession extends Page implements HasTable
                                         \App\Models\Academic\StudentAchievement::where('id', $achievementData['id'])
                                             ->update([
                                                 'keterangan' => $achievementData['keterangan'] ?? null,
-                                                'catatan' => $achievementData['catatan'] ?? null,
                                                 'makruj' => $achievementData['makruj'] ?? '-',
                                                 'mad' => $achievementData['mad'] ?? '-',
                                                 'tajwid' => $achievementData['tajwid'] ?? '-',

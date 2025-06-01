@@ -52,8 +52,6 @@ class AdminPanelProvider extends PanelProvider
                     ->label(__('menu.nav_group.banner')),
                 'blog' => Navigation\NavigationGroup::make()
                     ->label(__('menu.nav_group.blog')),
-                'content' => Navigation\NavigationGroup::make()
-                    ->label(__('menu.nav_group.content')),
                 'access' => Navigation\NavigationGroup::make()
                     ->label(__('menu.nav_group.access')),
                 'sites' => Navigation\NavigationGroup::make()
@@ -65,6 +63,8 @@ class AdminPanelProvider extends PanelProvider
                 'activities' => Navigation\NavigationGroup::make()
                     ->label(__('menu.nav_group.activities'))
                     ->collapsed(),
+                'content' => Navigation\NavigationGroup::make()
+                    ->label(__('menu.nav_group.content')),
             ])
             ->navigationItems([
                 Navigation\NavigationItem::make('Log Viewer') // !! To-Do: lang

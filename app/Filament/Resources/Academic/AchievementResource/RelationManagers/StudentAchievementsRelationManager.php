@@ -61,27 +61,19 @@ class StudentAchievementsRelationManager extends RelationManager
                 ->maxLength(255)
                 ->label('Deskripsi'),
 
-            Forms\Components\Textarea::make('catatan')
-                ->maxLength(65535)
-                ->label('Catatan'),
-
             Forms\Components\Section::make('Evaluasi')->schema([
                 Forms\Components\Select::make('makruj')
                     ->options($gradeOptions)
                     ->default('-'),
-
                 Forms\Components\Select::make('mad')
                     ->options($gradeOptions)
                     ->default('-'),
-
                 Forms\Components\Select::make('tajwid')
                     ->options($gradeOptions)
                     ->default('-'),
-
                 Forms\Components\Select::make('kelancaran')
                     ->options($gradeOptions)
                     ->default('-'),
-
                 Forms\Components\Select::make('fashohah')
                     ->options($gradeOptions)
                     ->default('-'),

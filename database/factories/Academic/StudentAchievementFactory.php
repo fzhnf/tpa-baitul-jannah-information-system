@@ -24,7 +24,6 @@ class StudentAchievementFactory extends Factory
             'achievement_id' => Achievement::factory(),
             'tanggal' => fake()->date(),
             'keterangan' => fake()->sentence(),
-            'catatan' => fake()->paragraph(),
             'makruj' => fake()->numberBetween(1, 5),
             'mad' => fake()->numberBetween(1, 5),
             'tajwid' => fake()->numberBetween(1, 5),

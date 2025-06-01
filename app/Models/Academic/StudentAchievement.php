@@ -16,7 +16,6 @@ class StudentAchievement extends Model
         'achievement_id',
         'tanggal',
         'keterangan',
-        'catatan',
         'makruj',
         'mad',
         'tajwid',
