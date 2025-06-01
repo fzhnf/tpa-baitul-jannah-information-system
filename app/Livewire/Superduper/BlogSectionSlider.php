@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Superduper;
+namespace App\Livewire\SuperDuper;
 
 use App\Models\Blog\Post;
 use App\Models\Blog\Category;

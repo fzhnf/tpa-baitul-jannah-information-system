@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Superduper\Pages;
+namespace App\Livewire\SuperDuper\Pages;
 
 use App\Models\ContactUs as ContactUsModel;
 use App\Services\SecurityLogger;

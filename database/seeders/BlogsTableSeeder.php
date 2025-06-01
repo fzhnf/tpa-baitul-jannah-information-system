@@ -9,6 +9,7 @@ use Symfony\Component\Uid\Ulid;
 use Faker\Factory as Faker;
 use App\Models\User;
 use App\Models\Blog\Category;
+use App\Models\Blog\Post;
 use Database\Factories\HtmlProvider;
 
 class BlogsTableSeeder extends Seeder

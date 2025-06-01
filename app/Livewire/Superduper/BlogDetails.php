@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire\Superduper;
+namespace App\Livewire\SuperDuper;
 
 use App\Models\Blog\Post;
 use App\Models\Blog\Category;
@@ -22,7 +22,7 @@ class BlogDetails extends Component
     /**
      * @param mixed $slug
      */
-    public function mount($slug): RedirectResponse
+    public function mount($slug): ?RedirectResponse
     {
         $this->slug = $slug;
 

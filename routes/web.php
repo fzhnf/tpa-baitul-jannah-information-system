@@ -1,9 +1,9 @@
 <?php
 
 use App\Filament\Resources\Academic\SemesterClassResource\Pages\StudentProgression;
-use App\Livewire\Superduper\BlogList;
-use App\Livewire\Superduper\BlogDetails;
-use App\Livewire\Superduper\Pages\ContactUs;
+use App\Livewire\SuperDuper\BlogList;
+use App\Livewire\SuperDuper\BlogDetails;
+use App\Livewire\SuperDuper\Pages\ContactUs;
 use Illuminate\Support\Facades\Route;
 
 /*
